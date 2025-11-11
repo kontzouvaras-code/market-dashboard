@@ -86,6 +86,38 @@
             font-size: 0.9em;
             font-weight: 600;
         }
+        .badge-golden-cross {
+            background: rgba(38, 222, 129, 0.3);
+            color: #26de81;
+            border: 2px solid #26de81;
+            box-shadow: 0 0 20px rgba(38, 222, 129, 0.3);
+        }
+        .badge-death-cross {
+            background: rgba(255, 71, 87, 0.3);
+            color: #ff4757;
+            border: 2px solid #ff4757;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
+        }
+        .badge-critical-risk {
+            background: rgba(139, 0, 0, 0.3);
+            color: #8B0000;
+            border: 2px solid #8B0000;
+            animation: pulse 2s infinite;
+        }
+        .badge-high-risk {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 2px solid #ff4757;
+        }
+        .badge-low-risk {
+            background: rgba(38, 222, 129, 0.2);
+            color: #26de81;
+            border: 2px solid #26de81;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
         .badge-extreme-fear { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
         .badge-fear { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
         .badge-neutral { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid #ffa502; }
@@ -126,11 +158,61 @@
         
         <div id="dashboard" style="display: none;">
             <div class="summary-box">
-                <strong style="color: #ffa502;">🤖 Claude AI Market Analysis:</strong><br>
+                <strong style="color: #ffa502;">📊 Market Analysis</strong> <span style="color: #666; font-size: 0.9em;">(powered by Claude AI)</span><br>
                 <span id="summaryText">Analyzing market conditions...</span>
             </div>
             
             <div class="dashboard">
+                <div class="card">
+                    <div class="card-title">🎯 Advanced Risk Assessment</div>
+                    <div class="card-subtitle">Multi-factor algorithmic risk evaluation</div>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div style="font-size: 3em; font-weight: 700; margin: 10px 0;" id="mainRiskLevel">--</div>
+                        <span class="status-badge" id="mainRiskBadge" style="font-size: 1.2em; padding: 10px 25px;">--</span>
+                    </div>
+                    <div style="margin-top: 20px; font-size: 0.85em; color: #888; line-height: 1.6;">
+                        <strong style="color: #00d4ff; display: block; margin-bottom: 10px;">Risk Calculation Logic:</strong>
+                        <div style="margin-bottom: 8px;">
+                            <strong style="color: #ff4757;">Critical Risk:</strong> VIX 10MA ≥30 OR price below all MAs OR (21MA&lt;50MA + VIX&gt;25)
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong style="color: #ff6b6b;">High Risk:</strong> VIX 10MA &gt;25 OR price below 21MA & 50MA
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong style="color: #ffa502;">Mid Risk:</strong> VIX 10MA &gt;20 OR price below 21MA
+                        </div>
+                        <div>
+                            <strong style="color: #26de81;">Low Risk:</strong> Favorable conditions across all indicators
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📈 Golden/Death Cross Analysis</div>
+                    <div class="card-subtitle">21-Day vs 50-Day moving average crossover signal</div>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div style="font-size: 2.5em; font-weight: 700; margin: 10px 0;" id="mainCrossStatus">--</div>
+                        <span class="status-badge" id="mainCrossBadge" style="font-size: 1.1em; padding: 10px 25px;">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Short-term Trend (21 vs 50)</span>
+                        <span class="metric-value" id="crossTrendValue">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">QQQ Distance from 50MA</span>
+                        <span class="metric-value" id="qqq50maMain">--</span>
+                    </div>
+                    <div style="margin-top: 20px; font-size: 0.85em; color: #888; line-height: 1.6;">
+                        <strong style="color: #00d4ff; display: block; margin-bottom: 10px;">What This Means:</strong>
+                        <div style="margin-bottom: 8px;">
+                            <strong style="color: #26de81;">Golden Cross (21MA > 50MA):</strong> Bullish momentum signal. Short-term trend stronger than medium-term.
+                        </div>
+                        <div>
+                            <strong style="color: #ff4757;">Death Cross (21MA < 50MA):</strong> Bearish momentum signal. Short-term weakness relative to medium-term.
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="card">
                     <div class="card-title">QQQ Moving Averages</div>
                     <div class="card-subtitle">Price position relative to key moving averages</div>
@@ -184,36 +266,15 @@
                 
                 <div class="card">
                     <div class="card-title">Mid Term Indicators</div>
-                    <div class="card-subtitle">10-day volatility and risk assessment</div>
+                    <div class="card-subtitle">10-day volatility assessment</div>
                     <div class="metric">
                         <span class="metric-label">VIX 10-Day Moving Avg</span>
                         <span class="metric-value" id="vix10ma">--</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Risk Level Assessment</span>
-                        <span class="status-badge" id="riskBadge">--</span>
                     </div>
                     <div style="margin-top: 15px; font-size: 0.85em; color: #888;">
                         VIX 10-20: Low-Mid Risk<br>
                         VIX 20-30: Elevated Risk<br>
                         VIX 30+: High Risk
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">Long Term Trend</div>
-                    <div class="card-subtitle">50-day moving average signals</div>
-                    <div class="metric">
-                        <span class="metric-label">Golden/Death Cross Status</span>
-                        <span class="status-badge" id="crossBadge">--</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">QQQ Distance from 50MA</span>
-                        <span class="metric-value" id="qqq50ma">--</span>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 0.85em; color: #888;">
-                        <strong style="color: #26de81;">Golden Cross:</strong> 21MA > 50MA (Bullish trend)<br>
-                        <strong style="color: #ff4757;">Death Cross:</strong> 21MA < 50MA (Bearish trend)
                     </div>
                 </div>
             </div>
@@ -248,9 +309,6 @@
 
     <script>
         const PUBLISHED_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=2141065289&single=true&output=csv';
-        
-        // PASTE YOUR ANTHROPIC API KEY HERE (replace the text between the quotes)
-        const ANTHROPIC_API_KEY = 'sk-ant-YOUR-API-KEY-HERE';
 
         function showError(message) {
             const errorDiv = document.getElementById('error');
@@ -288,7 +346,6 @@
 
         async function getAIAnalysis(data) {
             try {
-                // Call our Netlify function instead of calling Anthropic API directly
                 const response = await fetch('/.netlify/functions/analyze', {
                     method: 'POST',
                     headers: {
@@ -417,6 +474,10 @@
             ma21vs50El.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
             ma21vs50El.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
             
+            const crossTrendEl = document.getElementById('crossTrendValue');
+            crossTrendEl.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
+            crossTrendEl.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
+            
             const vixEodValue = parseFloat(data.vixEod);
             const vixEodEl = document.getElementById('vixEod');
             vixEodEl.textContent = data.vixEod;
@@ -442,30 +503,45 @@
             document.getElementById('vix10ma').textContent = data.vix10ma;
             document.getElementById('vix10ma').className = 'metric-value mid-risk';
             
-            const riskBadge = document.getElementById('riskBadge');
-            riskBadge.textContent = data.riskLevel.toUpperCase();
-            if (data.riskLevel.toLowerCase().includes('mid')) {
-                riskBadge.className = 'status-badge badge-mid-risk';
+            const mainRiskLevel = document.getElementById('mainRiskLevel');
+            const mainRiskBadge = document.getElementById('mainRiskBadge');
+            mainRiskLevel.textContent = data.riskLevel.toUpperCase();
+            mainRiskBadge.textContent = data.riskLevel.toUpperCase();
+            
+            if (data.riskLevel.toLowerCase().includes('critical')) {
+                mainRiskLevel.className = 'extreme-fear';
+                mainRiskBadge.className = 'status-badge badge-critical-risk';
             } else if (data.riskLevel.toLowerCase().includes('high')) {
-                riskBadge.className = 'status-badge badge-extreme-fear';
+                mainRiskLevel.className = 'extreme-fear';
+                mainRiskBadge.className = 'status-badge badge-high-risk';
+            } else if (data.riskLevel.toLowerCase().includes('mid')) {
+                mainRiskLevel.className = 'mid-risk';
+                mainRiskBadge.className = 'status-badge badge-mid-risk';
             } else {
-                riskBadge.className = 'status-badge badge-bullish';
+                mainRiskLevel.className = 'bullish';
+                mainRiskBadge.className = 'status-badge badge-low-risk';
             }
             
-            const crossBadge = document.getElementById('crossBadge');
-            crossBadge.textContent = data.crossStatus.toUpperCase();
+            const mainCrossStatus = document.getElementById('mainCrossStatus');
+            const mainCrossBadge = document.getElementById('mainCrossBadge');
+            
             if (data.crossStatus.toLowerCase().includes('bull')) {
-                crossBadge.className = 'status-badge badge-bullish';
+                mainCrossStatus.textContent = '⚡ GOLDEN CROSS';
+                mainCrossStatus.className = 'bullish';
+                mainCrossBadge.textContent = 'BULLISH SIGNAL';
+                mainCrossBadge.className = 'status-badge badge-golden-cross';
             } else {
-                crossBadge.className = 'status-badge badge-bearish';
+                mainCrossStatus.textContent = '⚠️ DEATH CROSS';
+                mainCrossStatus.className = 'bearish';
+                mainCrossBadge.textContent = 'BEARISH SIGNAL';
+                mainCrossBadge.className = 'status-badge badge-death-cross';
             }
             
             const qqq50maValue = parseFloat(data.qqq50ma);
-            const qqq50maEl = document.getElementById('qqq50ma');
-            qqq50maEl.innerHTML = data.qqq50ma + getTrendArrow(qqq50maValue);
-            qqq50maEl.className = 'metric-value ' + getColorClass(qqq50maValue, 'percent');
+            const qqq50maMainEl = document.getElementById('qqq50maMain');
+            qqq50maMainEl.innerHTML = data.qqq50ma + getTrendArrow(qqq50maValue);
+            qqq50maMainEl.className = 'metric-value ' + getColorClass(qqq50maValue, 'percent');
             
-            // Get AI analysis asynchronously
             document.getElementById('summaryText').textContent = 'Analyzing with Claude AI...';
             getAIAnalysis(data).then(analysis => {
                 document.getElementById('summaryText').textContent = analysis;
@@ -479,7 +555,7 @@
         }
 
         loadData();
-        setInterval(loadData, 3600000); // 3600000ms = 1 hour
+        setInterval(loadData, 3600000);
     </script>
 </body>
 </html>
