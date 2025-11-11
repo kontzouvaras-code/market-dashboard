@@ -74,7 +74,6 @@
         .fear { color: #ff6b6b; }
         .neutral { color: #ffa502; }
         .greed { color: #26de81; }
-        .extreme-greed { color: #20bf6b; }
         .bullish { color: #26de81; }
         .bearish { color: #ff4757; }
         .mid-risk { color: #ffa502; }
@@ -102,7 +101,6 @@
             background: rgba(139, 0, 0, 0.3);
             color: #8B0000;
             border: 2px solid #8B0000;
-            animation: pulse 2s infinite;
         }
         .badge-high-risk {
             background: rgba(255, 71, 87, 0.2);
@@ -114,65 +112,42 @@
             color: #26de81;
             border: 2px solid #26de81;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
         .badge-extreme-fear { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
         .badge-fear { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
         .badge-neutral { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid #ffa502; }
         .badge-mid-risk { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid #ffa502; }
         .badge-bullish { background: rgba(38, 222, 129, 0.2); color: #26de81; border: 1px solid #26de81; }
         .badge-greed { background: rgba(38, 222, 129, 0.2); color: #26de81; border: 1px solid #26de81; }
-        .badge-extreme-greed { background: rgba(32, 191, 107, 0.2); color: #20bf6b; border: 1px solid #20bf6b; }
         .badge-bearish { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
-        .legend {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 30px;
-        }
-        .legend h3 { margin-bottom: 15px; color: #00d4ff; }
-        .legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-        .legend-item {
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-        .legend-item strong { color: #00d4ff; display: block; margin-bottom: 5px; }
         .trend-arrow { font-size: 1.2em; margin-left: 5px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Market Risk Monitor with AI</h1>
+            <h1>Market Risk Monitor</h1>
             <div class="last-updated" id="lastUpdated">Loading...</div>
         </div>
 
-        <div id="loading" class="loading">Loading your market data from Google Sheets...</div>
+        <div id="loading" class="loading">Loading market data...</div>
         <div id="error" class="error" style="display: none;"></div>
         
         <div id="dashboard" style="display: none;">
             <div class="summary-box">
-                <strong style="color: #ffa502;">📊 Market Analysis</strong> <span style="color: #666; font-size: 0.9em;">(powered by Claude AI)</span><br>
-                <span id="summaryText">Analyzing market conditions...</span>
+                <strong style="color: #ffa502;">Market Analysis</strong> <span style="color: #666; font-size: 0.9em;">(powered by Claude AI)</span><br>
+                <span id="summaryText">Analyzing...</span>
             </div>
             
             <div class="dashboard">
                 <div class="card">
-                    <div class="card-title">🎯 Advanced Risk Assessment</div>
+                    <div class="card-title">Advanced Risk Assessment</div>
                     <div class="card-subtitle">Multi-factor algorithmic risk evaluation</div>
                     <div style="text-align: center; margin: 15px 0;">
-                        <span class="status-badge" id="mainRiskBadge" style="font-size: 1.1em; padding: 10px 25px;">--</span>
+                        <span class="status-badge" id="mainRiskBadge">--</span>
                     </div>
-                    <div style="margin-top: 20px; font-size: 0.85em; color: #888; line-height: 1.6;">
-                        <strong style="color: #00d4ff; display: block; margin-bottom: 10px;">Risk Calculation Logic:</strong>
+                    <div style="margin-top: 15px; font-size: 0.85em; color: #888; line-height: 1.6;">
                         <div style="margin-bottom: 8px;">
-                            <strong style="color: #ff4757;">Critical Risk:</strong> VIX 10MA ≥30 OR price below all MAs OR (21MA&lt;50MA + VIX&gt;25)
+                            <strong style="color: #ff4757;">Critical Risk:</strong> VIX 10MA ≥30 OR price below all MAs
                         </div>
                         <div style="margin-bottom: 8px;">
                             <strong style="color: #ff6b6b;">High Risk:</strong> VIX 10MA &gt;25 OR price below 21MA & 50MA
@@ -181,16 +156,16 @@
                             <strong style="color: #ffa502;">Mid Risk:</strong> VIX 10MA &gt;20 OR price below 21MA
                         </div>
                         <div>
-                            <strong style="color: #26de81;">Low Risk:</strong> Favorable conditions across all indicators
+                            <strong style="color: #26de81;">Low Risk:</strong> Favorable conditions
                         </div>
                     </div>
                 </div>
                 
                 <div class="card">
-                    <div class="card-title">📈 Golden/Death Cross Analysis</div>
-                    <div class="card-subtitle">21-Day vs 50-Day moving average crossover signal</div>
+                    <div class="card-title">Golden/Death Cross Analysis</div>
+                    <div class="card-subtitle">21-Day vs 50-Day MA crossover</div>
                     <div style="text-align: center; margin: 15px 0;">
-                        <span class="status-badge" id="mainCrossBadge" style="font-size: 1.1em; padding: 10px 25px;">--</span>
+                        <span class="status-badge" id="mainCrossBadge">--</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Short-term Trend (21 vs 50)</span>
@@ -200,20 +175,19 @@
                         <span class="metric-label">QQQ Distance from 50MA</span>
                         <span class="metric-value" id="qqq50maMain">--</span>
                     </div>
-                    <div style="margin-top: 20px; font-size: 0.85em; color: #888; line-height: 1.6;">
-                        <strong style="color: #00d4ff; display: block; margin-bottom: 10px;">What This Means:</strong>
+                    <div style="margin-top: 15px; font-size: 0.85em; color: #888; line-height: 1.6;">
                         <div style="margin-bottom: 8px;">
-                            <strong style="color: #26de81;">Golden Cross (21MA > 50MA):</strong> Bullish momentum signal. Short-term trend stronger than medium-term.
+                            <strong style="color: #26de81;">Golden Cross:</strong> Bullish momentum signal
                         </div>
                         <div>
-                            <strong style="color: #ff4757;">Death Cross (21MA < 50MA):</strong> Bearish momentum signal. Short-term weakness relative to medium-term.
+                            <strong style="color: #ff4757;">Death Cross:</strong> Bearish momentum signal
                         </div>
                     </div>
                 </div>
                 
                 <div class="card">
                     <div class="card-title">QQQ Moving Averages</div>
-                    <div class="card-subtitle">Price position relative to key moving averages</div>
+                    <div class="card-subtitle">Price relative to key MAs</div>
                     <div class="metric">
                         <span class="metric-label">Current Price</span>
                         <span class="metric-value" id="qqqPrice">--</span>
@@ -227,365 +201,151 @@
                         <span class="metric-value" id="qqq50">--</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-label">Short-term Trend (21 vs 50)</span>
+                        <span class="metric-label">21 vs 50 Trend</span>
                         <span class="metric-value" id="ma21vs50">--</span>
                     </div>
                 </div>
                 
                 <div class="card">
                     <div class="card-title">Short Term Sentiment</div>
-                    <div class="card-subtitle">Market volatility and fear indicators</div>
+                    <div class="card-subtitle">Volatility and fear indicators</div>
                     <div class="metric">
-                        <span class="metric-label">VIX End of Day (Fear Index)</span>
+                        <span class="metric-label">VIX (Fear Index)</span>
                         <span class="metric-value" id="vixEod">--</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-label">VIX vs. 10-Day Avg</span>
+                        <span class="metric-label">VIX vs 10-Day Avg</span>
                         <span class="metric-value" id="vixVs10d">--</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-label">QQQ Distance from 21MA</span>
+                        <span class="metric-label">QQQ from 21MA</span>
                         <span class="metric-value" id="qqq21ma">--</span>
                     </div>
                 </div>
                 
                 <div class="card">
-                    <div class="card-title">CNN Fear & Greed Index</div>
-                    <div class="card-subtitle">Market sentiment composite (0-100 scale)</div>
+                    <div class="card-title">CNN Fear & Greed</div>
+                    <div class="card-subtitle">Sentiment composite (0-100)</div>
                     <div class="large-value" id="fearGreedValue">--</div>
                     <div style="text-align: center;">
                         <span class="status-badge" id="fearGreedBadge">--</span>
                     </div>
-                    <div style="margin-top: 15px; font-size: 0.85em; color: #888; text-align: center;">
-                        0-25: Extreme Fear (potential buying opportunity)<br>
-                        26-45: Fear | 46-55: Neutral | 56-75: Greed | 76-100: Extreme Greed
-                    </div>
                 </div>
                 
                 <div class="card">
-                    <div class="card-title">Mid Term Indicators</div>
-                    <div class="card-subtitle">10-day volatility assessment</div>
+                    <div class="card-title">Mid Term</div>
+                    <div class="card-subtitle">10-day volatility</div>
                     <div class="metric">
-                        <span class="metric-label">VIX 10-Day Moving Avg</span>
+                        <span class="metric-label">VIX 10-Day MA</span>
                         <span class="metric-value" id="vix10ma">--</span>
                     </div>
-                    <div style="margin-top: 15px; font-size: 0.85em; color: #888;">
-                        VIX 10-20: Low-Mid Risk<br>
-                        VIX 20-30: Elevated Risk<br>
-                        VIX 30+: High Risk
-                    </div>
                 </div>
-            </div>
-            
-            <div class="legend">
-                <h3>📖 Understanding the Indicators</h3>
-                <div class="legend-grid">
-                    <div class="legend-item">
-                        <strong>Moving Averages (MA)</strong>
-                        Average price over a period. Price above MA = strength, below = weakness. 21MA tracks short-term, 50MA tracks medium-term trends.
-                    </div>
-                    <div class="legend-item">
-                        <strong>VIX (Fear Index)</strong>
-                        Measures expected market volatility. Higher VIX = more fear/uncertainty. Below 20 is calm, 20-30 is elevated, above 30 is high fear.
-                    </div>
-                    <div class="legend-item">
-                        <strong>Fear & Greed Index</strong>
-                        Composite of 7 market indicators. Extreme Fear often presents buying opportunities; Extreme Greed suggests caution.
-                    </div>
-                    <div class="legend-item">
-                        <strong>Cross Definition</strong>
-                        Golden Cross (bullish): 21MA crosses above 50MA. Death Cross (bearish): 21MA crosses below 50MA. Signals trend changes.
-                    </div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px; color: #666; font-size: 0.85em;">
-                Auto-refreshes every 60 minutes. Powered by Claude AI. For informational purposes only, not trading advice.
             </div>
         </div>
     </div>
 
     <script>
-        const PUBLISHED_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=2141065289&single=true&output=csv';
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=2141065289&single=true&output=csv';
 
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
+        function getTrendArrow(v) {
+            return v > 0 ? ' ↑' : v < 0 ? ' ↓' : '';
         }
 
-        function getTrendArrow(value) {
-            if (value > 0) return '<span class="trend-arrow">↑</span>';
-            if (value < 0) return '<span class="trend-arrow">↓</span>';
-            return '';
+        function getColorClass(v, t) {
+            if (t === 'vix') return v < 20 ? 'neutral' : v < 30 ? 'fear' : 'extreme-fear';
+            return v > 0 ? 'bullish' : 'bearish';
         }
 
-        function getColorClass(value, type) {
-            if (type === 'vix') {
-                if (value < 15) return 'greed';
-                if (value < 20) return 'neutral';
-                if (value < 30) return 'fear';
-                return 'extreme-fear';
-            }
-            if (type === 'percent') {
-                return value > 0 ? 'bullish' : 'bearish';
-            }
-            return 'neutral';
-        }
-
-        function getFearGreedStatus(value) {
-            if (value <= 25) return { text: 'EXTREME FEAR', class: 'badge-extreme-fear', color: 'extreme-fear' };
-            if (value <= 45) return { text: 'FEAR', class: 'badge-fear', color: 'fear' };
-            if (value <= 55) return { text: 'NEUTRAL', class: 'badge-neutral', color: 'neutral' };
-            if (value <= 75) return { text: 'GREED', class: 'badge-greed', color: 'greed' };
-            return { text: 'EXTREME GREED', class: 'badge-extreme-greed', color: 'extreme-greed' };
-        }
-
-        async function getAIAnalysis(data) {
-            try {
-                const response = await fetch('/.netlify/functions/analyze', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) {
-                    throw new Error('AI analysis failed: ' + response.status);
-                }
-
-                const result = await response.json();
-                return result.analysis;
-            } catch (error) {
-                console.error('AI analysis error:', error);
-                return 'AI analysis unavailable. Using standard analysis: ' + generateBasicSummary(data);
-            }
-        }
-
-        function generateBasicSummary(data) {
-            const fearGreedValue = parseFloat(data.fearGreed);
-            const qqq21maPercent = parseFloat(data.qqq21ma.replace('%', ''));
-            const qqq50maPercent = parseFloat(data.qqq50ma.replace('%', ''));
-            
-            let summary = '';
-            if (fearGreedValue <= 25) {
-                summary += 'Extreme Fear (' + fearGreedValue + ') suggests potential opportunity, but ';
-            } else if (fearGreedValue >= 75) {
-                summary += 'Extreme Greed (' + fearGreedValue + ') suggests caution warranted, ';
-            } else {
-                summary += 'Market sentiment is ' + getFearGreedStatus(fearGreedValue).text.toLowerCase() + ', ';
-            }
-            
-            if (qqq21maPercent < 0) {
-                summary += 'short-term weakness (QQQ below 21MA). ';
-            } else {
-                summary += 'short-term strength (QQQ above 21MA). ';
-            }
-            
-            if (qqq50maPercent > 0) {
-                summary += 'Long-term trend remains bullish (above 50MA).';
-            } else {
-                summary += 'Long-term trend is concerning (below 50MA).';
-            }
-            
-            const vixValue = parseFloat(data.vixEod);
-            if (vixValue > 20) {
-                summary += ' Elevated VIX (' + vixValue + ') indicates caution warranted.';
-            }
-            return summary;
+        function getFearGreedStatus(v) {
+            if (v <= 25) return { text: 'EXTREME FEAR', class: 'badge-extreme-fear' };
+            if (v <= 45) return { text: 'FEAR', class: 'badge-fear' };
+            if (v <= 55) return { text: 'NEUTRAL', class: 'badge-neutral' };
+            if (v <= 75) return { text: 'GREED', class: 'badge-greed' };
+            return { text: 'EXTREME GREED', class: 'badge-greed' };
         }
 
         async function loadData() {
             try {
-                const response = await fetch(PUBLISHED_CSV_URL);
+                const res = await fetch(CSV_URL);
+                if (!res.ok) throw new Error('Fetch failed');
                 
-                if (!response.ok) {
-                    throw new Error('Could not fetch data from Google Sheets. Status: ' + response.status);
-                }
+                const csv = await res.text();
+                const rows = csv.split('\n').map(r => r.split(',').map(c => c.trim().replace(/"/g, ''))).filter(r => r.some(c => c));
                 
-                const csvText = await response.text();
+                if (rows.length < 4) throw new Error('Not enough data');
                 
-                const rows = csvText.split('\n').map(row => {
-                    const values = [];
-                    let current = '';
-                    let inQuotes = false;
-                    
-                    for (let char of row) {
-                        if (char === '"') {
-                            inQuotes = !inQuotes;
-                        } else if (char === ',' && !inQuotes) {
-                            values.push(current.trim().replace(/^"|"$/g, ''));
-                            current = '';
-                        } else {
-                            current += char;
-                        }
-                    }
-                    values.push(current.trim().replace(/^"|"$/g, ''));
-                    return values;
-                }).filter(row => row.some(cell => cell !== ''));
-                
-                if (rows.length < 4) {
-                    throw new Error('Not enough data rows in sheet. Found ' + rows.length + ' rows.');
-                }
-                
-                let dataRow;
-                if (rows.length >= 4) {
-                    dataRow = rows[3];
-                } else if (rows.length >= 3) {
-                    dataRow = rows[2];
-                } else {
-                    dataRow = rows[1];
-                }
-                
+                const d = rows[3];
                 const data = {
-                    qqqPrice: dataRow[0] || '--',
-                    qqq21: dataRow[1] || '--',
-                    qqq50: dataRow[2] || '--',
-                    ma21vs50: dataRow[3] || '--',
-                    vixEod: dataRow[4] || '--',
-                    vixVs10d: dataRow[5] || '--',
-                    qqq21ma: dataRow[6] || '--',
-                    fearGreed: dataRow[7] || '--',
-                    fearGreedText: dataRow[8] || '--',
-                    vix10ma: dataRow[9] || '--',
-                    riskLevel: dataRow[10] || '--',
-                    crossStatus: dataRow[11] || '--',
-                    qqq50ma: dataRow[12] || '--'
+                    qqqPrice: d[0] || '--',
+                    qqq21: d[1] || '--',
+                    qqq50: d[2] || '--',
+                    ma21vs50: d[3] || '--',
+                    vixEod: d[4] || '--',
+                    vixVs10d: d[5] || '--',
+                    qqq21ma: d[6] || '--',
+                    fearGreed: d[7] || '--',
+                    vix10ma: d[9] || '--',
+                    riskLevel: d[10] || '--',
+                    crossStatus: d[11] || '--',
+                    qqq50ma: d[12] || '--'
                 };
                 
                 updateDashboard(data);
-            } catch (error) {
-                console.error('Error loading data:', error);
-                showError('Failed to load data: ' + error.message + '. Make sure your sheet is published to the web.');
+            } catch (e) {
+                document.getElementById('error').textContent = 'Error: ' + e.message;
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
             }
         }
 
-        function updateDashboard(data) {
-            document.getElementById('qqqPrice').textContent = '
-
-        loadData();
-        setInterval(loadData, 3600000);
-    </script>
-</body>
-</html> + data.qqqPrice;
-            document.getElementById('qqq21').textContent = '
-
-        loadData();
-        setInterval(loadData, 3600000);
-    </script>
-</body>
-</html> + data.qqq21;
-            document.getElementById('qqq50').textContent = '
-
-        loadData();
-        setInterval(loadData, 3600000);
-    </script>
-</body>
-</html> + data.qqq50;
-            
-            const ma21vs50Value = parseFloat(data.ma21vs50);
-            const ma21vs50El = document.getElementById('ma21vs50');
-            if (ma21vs50El) {
-                ma21vs50El.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
-                ma21vs50El.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
-            }
-            
-            const crossTrendEl = document.getElementById('crossTrendValue');
-            if (crossTrendEl) {
-                crossTrendEl.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
-                crossTrendEl.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
-            }
-            
-            const vixEodValue = parseFloat(data.vixEod);
-            const vixEodEl = document.getElementById('vixEod');
-            if (vixEodEl) {
-                vixEodEl.textContent = data.vixEod;
-                vixEodEl.className = 'metric-value ' + getColorClass(vixEodValue, 'vix');
-            }
-            
-            const vixVs10dValue = parseFloat(data.vixVs10d);
-            const vixVs10dEl = document.getElementById('vixVs10d');
-            if (vixVs10dEl) {
-                vixVs10dEl.innerHTML = data.vixVs10d + getTrendArrow(vixVs10dValue);
-                vixVs10dEl.className = 'metric-value ' + (vixVs10dValue > 0 ? 'extreme-fear' : 'greed');
-            }
-            
-            const qqq21maValue = parseFloat(data.qqq21ma);
-            const qqq21maEl = document.getElementById('qqq21ma');
-            if (qqq21maEl) {
-                qqq21maEl.textContent = data.qqq21ma;
-                qqq21maEl.className = 'metric-value ' + getColorClass(qqq21maValue, 'percent');
-            }
-            
-            const fearGreedValue = parseFloat(data.fearGreed);
-            const fearGreedStatus = getFearGreedStatus(fearGreedValue);
-            const fearGreedValueEl = document.getElementById('fearGreedValue');
-            const fearGreedBadgeEl = document.getElementById('fearGreedBadge');
-            if (fearGreedValueEl) {
-                fearGreedValueEl.textContent = data.fearGreed;
-                fearGreedValueEl.className = 'large-value ' + fearGreedStatus.color;
-            }
-            if (fearGreedBadgeEl) {
-                fearGreedBadgeEl.textContent = fearGreedStatus.text;
-                fearGreedBadgeEl.className = 'status-badge ' + fearGreedStatus.class;
-            }
-            
-            const vix10maEl = document.getElementById('vix10ma');
-            if (vix10maEl) {
-                vix10maEl.textContent = data.vix10ma;
-                vix10maEl.className = 'metric-value mid-risk';
-            }
-            
-            const mainRiskBadge = document.getElementById('mainRiskBadge');
-            if (mainRiskBadge) {
-                mainRiskBadge.textContent = data.riskLevel.toUpperCase();
-                
-                if (data.riskLevel.toLowerCase().includes('critical')) {
-                    mainRiskBadge.className = 'status-badge badge-critical-risk';
-                } else if (data.riskLevel.toLowerCase().includes('high')) {
-                    mainRiskBadge.className = 'status-badge badge-high-risk';
-                } else if (data.riskLevel.toLowerCase().includes('mid')) {
-                    mainRiskBadge.className = 'status-badge badge-mid-risk';
-                } else {
-                    mainRiskBadge.className = 'status-badge badge-low-risk';
+        function updateDashboard(d) {
+            const set = (id, val, cls) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (val !== undefined) el.textContent = val;
+                    if (cls) el.className = cls;
                 }
-            }
+            };
             
-            const mainCrossBadge = document.getElementById('mainCrossBadge');
-            if (mainCrossBadge) {
-                if (data.crossStatus.toLowerCase().includes('bull')) {
-                    mainCrossBadge.textContent = 'BULLISH SIGNAL';
-                    mainCrossBadge.className = 'status-badge badge-golden-cross';
-                } else {
-                    mainCrossBadge.textContent = 'BEARISH SIGNAL';
-                    mainCrossBadge.className = 'status-badge badge-death-cross';
-                }
-            }
+            set('qqqPrice', '$' + d.qqqPrice);
+            set('qqq21', '$' + d.qqq21);
+            set('qqq50', '$' + d.qqq50);
             
-            const qqq50maValue = parseFloat(data.qqq50ma);
-            const qqq50maMainEl = document.getElementById('qqq50maMain');
-            if (qqq50maMainEl) {
-                qqq50maMainEl.innerHTML = data.qqq50ma + getTrendArrow(qqq50maValue);
-                qqq50maMainEl.className = 'metric-value ' + getColorClass(qqq50maValue, 'percent');
-            }
+            const ma21 = parseFloat(d.ma21vs50);
+            set('ma21vs50', d.ma21vs50 + getTrendArrow(ma21), 'metric-value ' + getColorClass(ma21, 'p'));
+            set('crossTrendValue', d.ma21vs50 + getTrendArrow(ma21), 'metric-value ' + getColorClass(ma21, 'p'));
             
-            const summaryTextEl = document.getElementById('summaryText');
-            if (summaryTextEl) {
-                summaryTextEl.textContent = 'Analyzing with Claude AI...';
-                getAIAnalysis(data).then(analysis => {
-                    if (summaryTextEl) {
-                        summaryTextEl.textContent = analysis;
-                    }
-                });
-            }
+            const vix = parseFloat(d.vixEod);
+            set('vixEod', d.vixEod, 'metric-value ' + getColorClass(vix, 'vix'));
             
-            const now = new Date();
-            const lastUpdatedEl = document.getElementById('lastUpdated');
-            if (lastUpdatedEl) {
-                lastUpdatedEl.textContent = 'Last Updated: ' + now.toLocaleString();
-            }
+            const vix10 = parseFloat(d.vixVs10d);
+            set('vixVs10d', d.vixVs10d + getTrendArrow(vix10), 'metric-value ' + (vix10 > 0 ? 'fear' : 'neutral'));
+            
+            set('qqq21ma', d.qqq21ma, 'metric-value ' + getColorClass(parseFloat(d.qqq21ma), 'p'));
+            
+            const fg = parseFloat(d.fearGreed);
+            const fgs = getFearGreedStatus(fg);
+            set('fearGreedValue', d.fearGreed, 'large-value ' + fgs.class.split('-')[1]);
+            set('fearGreedBadge', fgs.text, 'status-badge ' + fgs.class);
+            
+            set('vix10ma', d.vix10ma);
+            
+            const risk = d.riskLevel.toLowerCase();
+            let riskClass = 'badge-low-risk';
+            if (risk.includes('critical')) riskClass = 'badge-critical-risk';
+            else if (risk.includes('high')) riskClass = 'badge-high-risk';
+            else if (risk.includes('mid')) riskClass = 'badge-mid-risk';
+            set('mainRiskBadge', d.riskLevel.toUpperCase(), 'status-badge ' + riskClass);
+            
+            const cross = d.crossStatus.toLowerCase().includes('bull');
+            set('mainCrossBadge', cross ? 'BULLISH SIGNAL' : 'BEARISH SIGNAL', 
+                'status-badge ' + (cross ? 'badge-golden-cross' : 'badge-death-cross'));
+            
+            const q50 = parseFloat(d.qqq50ma);
+            set('qqq50maMain', d.qqq50ma + getTrendArrow(q50), 'metric-value ' + getColorClass(q50, 'p'));
+            
+            set('summaryText', 'Market sentiment: ' + d.riskLevel + '. Trend: ' + d.crossStatus + '.');
+            set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
             
             document.getElementById('loading').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
