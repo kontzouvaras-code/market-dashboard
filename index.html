@@ -189,8 +189,7 @@
                 <div class="card">
                     <div class="card-title">📈 Golden/Death Cross Analysis</div>
                     <div class="card-subtitle">21-Day vs 50-Day moving average crossover signal</div>
-                    <div style="text-align: center; margin: 20px 0;">
-                        <div style="font-size: 2.5em; font-weight: 700; margin: 10px 0;" id="mainCrossStatus">--</div>
+                    <div style="text-align: center; margin: 15px 0;">
                         <span class="status-badge" id="mainCrossBadge" style="font-size: 1.1em; padding: 10px 25px;">--</span>
                     </div>
                     <div class="metric">
@@ -464,90 +463,129 @@
         }
 
         function updateDashboard(data) {
-            document.getElementById('qqqPrice').textContent = '$' + data.qqqPrice;
-            document.getElementById('qqq21').textContent = '$' + data.qqq21;
-            document.getElementById('qqq50').textContent = '$' + data.qqq50;
+            document.getElementById('qqqPrice').textContent = '
+
+        loadData();
+        setInterval(loadData, 3600000);
+    </script>
+</body>
+</html> + data.qqqPrice;
+            document.getElementById('qqq21').textContent = '
+
+        loadData();
+        setInterval(loadData, 3600000);
+    </script>
+</body>
+</html> + data.qqq21;
+            document.getElementById('qqq50').textContent = '
+
+        loadData();
+        setInterval(loadData, 3600000);
+    </script>
+</body>
+</html> + data.qqq50;
             
             const ma21vs50Value = parseFloat(data.ma21vs50);
             const ma21vs50El = document.getElementById('ma21vs50');
-            ma21vs50El.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
-            ma21vs50El.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
+            if (ma21vs50El) {
+                ma21vs50El.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
+                ma21vs50El.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
+            }
             
             const crossTrendEl = document.getElementById('crossTrendValue');
-            crossTrendEl.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
-            crossTrendEl.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
+            if (crossTrendEl) {
+                crossTrendEl.innerHTML = data.ma21vs50 + getTrendArrow(ma21vs50Value);
+                crossTrendEl.className = 'metric-value ' + getColorClass(ma21vs50Value, 'percent');
+            }
             
             const vixEodValue = parseFloat(data.vixEod);
             const vixEodEl = document.getElementById('vixEod');
-            vixEodEl.textContent = data.vixEod;
-            vixEodEl.className = 'metric-value ' + getColorClass(vixEodValue, 'vix');
+            if (vixEodEl) {
+                vixEodEl.textContent = data.vixEod;
+                vixEodEl.className = 'metric-value ' + getColorClass(vixEodValue, 'vix');
+            }
             
             const vixVs10dValue = parseFloat(data.vixVs10d);
             const vixVs10dEl = document.getElementById('vixVs10d');
-            vixVs10dEl.innerHTML = data.vixVs10d + getTrendArrow(vixVs10dValue);
-            vixVs10dEl.className = 'metric-value ' + (vixVs10dValue > 0 ? 'extreme-fear' : 'greed');
+            if (vixVs10dEl) {
+                vixVs10dEl.innerHTML = data.vixVs10d + getTrendArrow(vixVs10dValue);
+                vixVs10dEl.className = 'metric-value ' + (vixVs10dValue > 0 ? 'extreme-fear' : 'greed');
+            }
             
             const qqq21maValue = parseFloat(data.qqq21ma);
             const qqq21maEl = document.getElementById('qqq21ma');
-            qqq21maEl.textContent = data.qqq21ma;
-            qqq21maEl.className = 'metric-value ' + getColorClass(qqq21maValue, 'percent');
+            if (qqq21maEl) {
+                qqq21maEl.textContent = data.qqq21ma;
+                qqq21maEl.className = 'metric-value ' + getColorClass(qqq21maValue, 'percent');
+            }
             
             const fearGreedValue = parseFloat(data.fearGreed);
             const fearGreedStatus = getFearGreedStatus(fearGreedValue);
-            document.getElementById('fearGreedValue').textContent = data.fearGreed;
-            document.getElementById('fearGreedValue').className = 'large-value ' + fearGreedStatus.color;
-            document.getElementById('fearGreedBadge').textContent = fearGreedStatus.text;
-            document.getElementById('fearGreedBadge').className = 'status-badge ' + fearGreedStatus.class;
-            
-            document.getElementById('vix10ma').textContent = data.vix10ma;
-            document.getElementById('vix10ma').className = 'metric-value mid-risk';
-            
-            const mainRiskLevel = document.getElementById('mainRiskLevel');
-            const mainRiskBadge = document.getElementById('mainRiskBadge');
-            mainRiskLevel.textContent = data.riskLevel.toUpperCase();
-            mainRiskBadge.textContent = data.riskLevel.toUpperCase();
-            
-            if (data.riskLevel.toLowerCase().includes('critical')) {
-                mainRiskLevel.className = 'extreme-fear';
-                mainRiskBadge.className = 'status-badge badge-critical-risk';
-            } else if (data.riskLevel.toLowerCase().includes('high')) {
-                mainRiskLevel.className = 'extreme-fear';
-                mainRiskBadge.className = 'status-badge badge-high-risk';
-            } else if (data.riskLevel.toLowerCase().includes('mid')) {
-                mainRiskLevel.className = 'mid-risk';
-                mainRiskBadge.className = 'status-badge badge-mid-risk';
-            } else {
-                mainRiskLevel.className = 'bullish';
-                mainRiskBadge.className = 'status-badge badge-low-risk';
+            const fearGreedValueEl = document.getElementById('fearGreedValue');
+            const fearGreedBadgeEl = document.getElementById('fearGreedBadge');
+            if (fearGreedValueEl) {
+                fearGreedValueEl.textContent = data.fearGreed;
+                fearGreedValueEl.className = 'large-value ' + fearGreedStatus.color;
+            }
+            if (fearGreedBadgeEl) {
+                fearGreedBadgeEl.textContent = fearGreedStatus.text;
+                fearGreedBadgeEl.className = 'status-badge ' + fearGreedStatus.class;
             }
             
-            const mainCrossStatus = document.getElementById('mainCrossStatus');
-            const mainCrossBadge = document.getElementById('mainCrossBadge');
+            const vix10maEl = document.getElementById('vix10ma');
+            if (vix10maEl) {
+                vix10maEl.textContent = data.vix10ma;
+                vix10maEl.className = 'metric-value mid-risk';
+            }
             
-            if (data.crossStatus.toLowerCase().includes('bull')) {
-                mainCrossStatus.textContent = '⚡ GOLDEN CROSS';
-                mainCrossStatus.className = 'bullish';
-                mainCrossBadge.textContent = 'BULLISH SIGNAL';
-                mainCrossBadge.className = 'status-badge badge-golden-cross';
-            } else {
-                mainCrossStatus.textContent = '⚠️ DEATH CROSS';
-                mainCrossStatus.className = 'bearish';
-                mainCrossBadge.textContent = 'BEARISH SIGNAL';
-                mainCrossBadge.className = 'status-badge badge-death-cross';
+            const mainRiskBadge = document.getElementById('mainRiskBadge');
+            if (mainRiskBadge) {
+                mainRiskBadge.textContent = data.riskLevel.toUpperCase();
+                
+                if (data.riskLevel.toLowerCase().includes('critical')) {
+                    mainRiskBadge.className = 'status-badge badge-critical-risk';
+                } else if (data.riskLevel.toLowerCase().includes('high')) {
+                    mainRiskBadge.className = 'status-badge badge-high-risk';
+                } else if (data.riskLevel.toLowerCase().includes('mid')) {
+                    mainRiskBadge.className = 'status-badge badge-mid-risk';
+                } else {
+                    mainRiskBadge.className = 'status-badge badge-low-risk';
+                }
+            }
+            
+            const mainCrossBadge = document.getElementById('mainCrossBadge');
+            if (mainCrossBadge) {
+                if (data.crossStatus.toLowerCase().includes('bull')) {
+                    mainCrossBadge.textContent = 'BULLISH SIGNAL';
+                    mainCrossBadge.className = 'status-badge badge-golden-cross';
+                } else {
+                    mainCrossBadge.textContent = 'BEARISH SIGNAL';
+                    mainCrossBadge.className = 'status-badge badge-death-cross';
+                }
             }
             
             const qqq50maValue = parseFloat(data.qqq50ma);
             const qqq50maMainEl = document.getElementById('qqq50maMain');
-            qqq50maMainEl.innerHTML = data.qqq50ma + getTrendArrow(qqq50maValue);
-            qqq50maMainEl.className = 'metric-value ' + getColorClass(qqq50maValue, 'percent');
+            if (qqq50maMainEl) {
+                qqq50maMainEl.innerHTML = data.qqq50ma + getTrendArrow(qqq50maValue);
+                qqq50maMainEl.className = 'metric-value ' + getColorClass(qqq50maValue, 'percent');
+            }
             
-            document.getElementById('summaryText').textContent = 'Analyzing with Claude AI...';
-            getAIAnalysis(data).then(analysis => {
-                document.getElementById('summaryText').textContent = analysis;
-            });
+            const summaryTextEl = document.getElementById('summaryText');
+            if (summaryTextEl) {
+                summaryTextEl.textContent = 'Analyzing with Claude AI...';
+                getAIAnalysis(data).then(analysis => {
+                    if (summaryTextEl) {
+                        summaryTextEl.textContent = analysis;
+                    }
+                });
+            }
             
             const now = new Date();
-            document.getElementById('lastUpdated').textContent = 'Last Updated: ' + now.toLocaleString();
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            if (lastUpdatedEl) {
+                lastUpdatedEl.textContent = 'Last Updated: ' + now.toLocaleString();
+            }
             
             document.getElementById('loading').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
