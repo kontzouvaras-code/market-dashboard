@@ -207,11 +207,15 @@
                 </div>
                 
                 <div class="card">
-                    <div class="card-title">Short Term Sentiment</div>
-                    <div class="card-subtitle">Volatility and fear indicators</div>
+                    <div class="card-title">Market Sentiment & Volatility</div>
+                    <div class="card-subtitle">Short and mid-term fear indicators</div>
                     <div class="metric">
                         <span class="metric-label">VIX (Fear Index)</span>
                         <span class="metric-value" id="vixEod">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">VIX 10-Day MA</span>
+                        <span class="metric-value" id="vix10ma">--</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">VIX vs 10-Day Avg</span>
@@ -229,15 +233,6 @@
                     <div class="large-value" id="fearGreedValue">--</div>
                     <div style="text-align: center;">
                         <span class="status-badge" id="fearGreedBadge">--</span>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">Mid Term</div>
-                    <div class="card-subtitle">10-day volatility</div>
-                    <div class="metric">
-                        <span class="metric-label">VIX 10-Day MA</span>
-                        <span class="metric-value" id="vix10ma">--</span>
                     </div>
                 </div>
             </div>
