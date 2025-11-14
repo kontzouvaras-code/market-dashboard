@@ -135,7 +135,7 @@
         <div id="dashboard" style="display: none;">
             <div class="summary-box">
                 <strong style="color: #ffa502;">Market Analysis</strong> <span style="color: #666; font-size: 0.9em;">(powered by Claude AI)</span><br>
-                <span id="summaryText">Analyzing...</span>
+                <span id="summaryText">Analyzing market conditions...</span>
             </div>
             
             <div class="dashboard">
@@ -264,6 +264,28 @@
             return { text: 'EXTREME GREED', class: 'badge-greed' };
         }
 
+        async function getAIAnalysis(data) {
+            try {
+                const response = await fetch('/.netlify/functions/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('AI analysis failed');
+                }
+
+                const result = await response.json();
+                return result.analysis;
+            } catch (error) {
+                console.error('AI Analysis Error:', error);
+                return 'AI analysis temporarily unavailable. Market sentiment: ' + data.riskLevel + '. Trend: ' + data.crossStatus + '.';
+            }
+        }
+
         async function loadData() {
             try {
                 const res = await fetch(CSV_URL);
@@ -291,6 +313,11 @@
                 };
                 
                 updateDashboard(data);
+                
+                // Get AI analysis after updating the dashboard
+                const analysis = await getAIAnalysis(data);
+                document.getElementById('summaryText').textContent = analysis;
+                
             } catch (e) {
                 document.getElementById('error').textContent = 'Error: ' + e.message;
                 document.getElementById('error').style.display = 'block';
@@ -344,7 +371,7 @@
             const q50 = parseFloat(d.qqq50ma);
             set('qqq50maMain', d.qqq50ma + getTrendArrow(q50), 'metric-value ' + getColorClass(q50, 'p'));
             
-            set('summaryText', 'Market sentiment: ' + d.riskLevel + '. Trend: ' + d.crossStatus + '.');
+            set('summaryText', 'Getting AI analysis...');
             set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
             
             document.getElementById('loading').style.display = 'none';
