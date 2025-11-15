@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methodology & Glossary - Market Risk Monitor</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2300d4ff;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%230099ff;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M25 50 L35 40 L45 55 L55 35 L65 45 L75 30' stroke='white' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='75' cy='30' r='3' fill='white'/%3E%3C/svg%3E">
+    
+    <!-- Modern Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #000000;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        
+        /* Header */
+        .header { text-align: center; margin-bottom: 40px; padding: 20px; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            color: #0099ff;
+            transform: translateX(-5px);
+        }
+        .back-link::before {
+            content: "← ";
+            font-size: 1.2em;
+        }
+        .header-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+        }
+        .logo-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #00d4ff, #0099ff, #00d4ff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        .header-subtitle {
+            font-size: 1em;
+            color: #888;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Glossary Section */
+        .glossary-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glossary-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+        .glossary-icon {
+            font-size: 2em;
+        }
+        .glossary-header h2 {
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+        .glossary-intro {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #ccc;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid #00d4ff;
+            border-radius: 8px;
+        }
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .glossary-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glossary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+        .glossary-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .glossary-emoji {
+            font-size: 1.8em;
+        }
+        .glossary-card-header h3 {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #00d4ff;
+            margin: 0;
+        }
+        .glossary-content {
+            color: #e0e0e0;
+            line-height: 1.7;
+        }
+        .glossary-content p {
+            margin-bottom: 15px;
+        }
+        .glossary-content strong {
+            color: #fff;
+            font-weight: 600;
+        }
+        .glossary-content ul {
+            margin: 10px 0 15px 20px;
+            padding: 0;
+        }
+        .glossary-content li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .glossary-content ul ul {
+            margin-top: 8px;
+            margin-left: 20px;
+        }
+        .risk-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .risk-label.low {
+            background: rgba(38, 222, 129, 0.2);
+            color: #26de81;
+            border: 1px solid #26de81;
+        }
+        .risk-label.moderate {
+            background: rgba(255, 165, 2, 0.2);
+            color: #ffa502;
+            border: 1px solid #ffa502;
+        }
+        .risk-label.high {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .risk-label.critical {
+            background: rgba(139, 0, 0, 0.2);
+            color: #ff4757;
+            border: 1px solid #ff4757;
+        }
+        .vix-level, .fg-level {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .vix-level.low, .fg-level.greed, .fg-level.extreme-greed {
+            background: rgba(38, 222, 129, 0.2);
+            color: #26de81;
+        }
+        .vix-level.normal, .fg-level.neutral {
+            background: rgba(255, 165, 2, 0.2);
+            color: #ffa502;
+        }
+        .vix-level.elevated, .fg-level.fear {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        .vix-level.high, .vix-level.extreme, .fg-level.extreme-fear {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+        .glossary-footer {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 165, 2, 0.2);
+        }
+        .glossary-footer p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        .glossary-footer p:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+            .glossary-section {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-link">Back to Dashboard</a>
+            <div class="header-logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 17 9 11 13 15 21 7"></polyline>
+                        <polyline points="14 7 21 7 21 14"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <h1>Methodology & Intelligence Glossary</h1>
+            <div class="header-subtitle">Understanding the Market Risk Monitor System</div>
+        </div>
+
+        <div class="glossary-section">
+            <div class="glossary-header">
+                <span class="glossary-icon">📚</span>
+                <h2>Complete Guide to Dashboard Metrics</h2>
+            </div>
+            
+            <div class="glossary-intro">
+                This dashboard combines multiple technical indicators, sentiment analysis, and AI-powered insights to provide comprehensive market risk assessment. Below is a detailed explanation of all metrics, calculations, and intelligence systems.
+            </div>
+            
+            <div class="glossary-grid">
+                <!-- Risk Score Meter -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">🎯</span>
+                        <h3>Composite Risk Score (0-100)</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What it is:</strong> A proprietary algorithm that combines four key market risk factors into a single, easy-to-understand score. The system analyzes VIX volatility levels, price position relative to moving averages, momentum crossovers, and market sentiment to generate a comprehensive risk assessment.</p>
+                        
+                        <p><strong>The Four Components:</strong></p>
+                        <ul>
+                            <li><strong>VIX Component:</strong> Measures market volatility and fear levels based on the VIX 10-day moving average</li>
+                            <li><strong>Price Position Component:</strong> Evaluates where current price sits relative to key moving averages (21MA and 50MA)</li>
+                            <li><strong>Momentum Component:</strong> Analyzes Golden Cross and Death Cross patterns between short and intermediate-term trends</li>
+                            <li><strong>Sentiment Component:</strong> Incorporates the CNN Fear & Greed Index to gauge market psychology</li>
+                        </ul>
+                        
+                        <p><strong>Score Interpretation:</strong></p>
+                        <ul>
+                            <li><span class="risk-label low">0-25: LOW RISK</span> - Favorable conditions for deploying capital</li>
+                            <li><span class="risk-label moderate">26-50: MODERATE RISK</span> - Proceed with caution, consider scaling positions</li>
+                            <li><span class="risk-label high">51-75: HIGH RISK</span> - Reduce exposure, focus on preservation</li>
+                            <li><span class="risk-label critical">76-100: CRITICAL RISK</span> - Defensive positioning recommended</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Moving Averages -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">📈</span>
+                        <h3>Moving Averages (MA)</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What they are:</strong> Statistical calculations that smooth price data by creating a constantly updated average price over specific time periods.</p>
+                        
+                        <p><strong>21-Day Moving Average (21MA):</strong></p>
+                        <ul>
+                            <li>Short-term trend indicator</li>
+                            <li>More responsive to recent price changes</li>
+                            <li>Used for tactical entry/exit points</li>
+                            <li>Formula: Sum of last 21 closing prices ÷ 21</li>
+                        </ul>
+                        
+                        <p><strong>50-Day Moving Average (50MA):</strong></p>
+                        <ul>
+                            <li>Intermediate-term trend indicator</li>
+                            <li>Less sensitive to daily volatility</li>
+                            <li>Key support/resistance level</li>
+                            <li>Formula: Sum of last 50 closing prices ÷ 50</li>
+                        </ul>
+                        
+                        <p><strong>Price vs MA Distance:</strong></p>
+                        <ul>
+                            <li>Calculated as: (Current Price - MA) / MA × 100</li>
+                            <li>Positive % = Price above MA (bullish)</li>
+                            <li>Negative % = Price below MA (bearish)</li>
+                            <li>Extreme values (&gt;5% or &lt;-5%) suggest overextension</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Golden/Death Cross -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">⚡</span>
+                        <h3>Golden Cross / Death Cross</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What it is:</strong> A powerful momentum indicator based on the relationship between short-term (21-day) and intermediate-term (50-day) moving averages.</p>
+                        
+                        <p><strong>Golden Cross (Bullish):</strong></p>
+                        <ul>
+                            <li>Occurs when 21MA crosses above 50MA</li>
+                            <li>Signals shift to upward momentum</li>
+                            <li>Historically precedes sustained rallies</li>
+                            <li>Confirmation: 21MA should be &gt;1% above 50MA</li>
+                        </ul>
+                        
+                        <p><strong>Death Cross (Bearish):</strong></p>
+                        <ul>
+                            <li>Occurs when 21MA crosses below 50MA</li>
+                            <li>Signals shift to downward momentum</li>
+                            <li>Warning of potential trend reversal</li>
+                            <li>Historically precedes market corrections</li>
+                        </ul>
+                        
+                        <p><strong>Dashboard Metric (21MA vs 50MA %):</strong></p>
+                        <ul>
+                            <li>Positive value: Golden Cross territory</li>
+                            <li>Negative value: Death Cross territory</li>
+                            <li>Magnitude shows strength of trend</li>
+                            <li>Formula: (21MA - 50MA) / 50MA × 100</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- VIX -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">💥</span>
+                        <h3>VIX (Volatility Index)</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What it is:</strong> The CBOE Volatility Index, often called the "Fear Index," measures the market's expectation of 30-day forward volatility based on S&P 500 options pricing.</p>
+                        
+                        <p><strong>Interpretation Levels:</strong></p>
+                        <ul>
+                            <li><strong>&lt;15:</strong> <span class="vix-level low">Low volatility</span> - Complacency, potential for surprise moves</li>
+                            <li><strong>15-20:</strong> <span class="vix-level normal">Normal range</span> - Typical market conditions</li>
+                            <li><strong>20-30:</strong> <span class="vix-level elevated">Elevated</span> - Increased uncertainty, cautious positioning</li>
+                            <li><strong>30-40:</strong> <span class="vix-level high">High</span> - Significant fear, potential opportunities</li>
+                            <li><strong>&gt;40:</strong> <span class="vix-level extreme">Extreme panic</span> - Historical buying opportunities</li>
+                        </ul>
+                        
+                        <p><strong>VIX 10-Day Moving Average:</strong></p>
+                        <ul>
+                            <li>Smooths daily VIX fluctuations</li>
+                            <li>Better gauge of sustained volatility trends</li>
+                            <li>Used in risk score calculation</li>
+                        </ul>
+                        
+                        <p><strong>VIX vs 10-Day Average:</strong></p>
+                        <ul>
+                            <li>Shows if current fear is increasing or decreasing</li>
+                            <li>Positive % = Fear rising (volatility spike)</li>
+                            <li>Negative % = Fear subsiding (calm returning)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Fear & Greed -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">🎭</span>
+                        <h3>CNN Fear & Greed Index</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What it is:</strong> A composite sentiment indicator that measures investor emotion and behavior across seven different market factors.</p>
+                        
+                        <p><strong>Seven Components:</strong></p>
+                        <ul>
+                            <li><strong>Market Momentum:</strong> S&P 500 vs 125-day MA</li>
+                            <li><strong>Stock Price Strength:</strong> Stocks at 52-week highs vs lows</li>
+                            <li><strong>Stock Price Breadth:</strong> NYSE advancing vs declining volume</li>
+                            <li><strong>Put/Call Options:</strong> Put volume vs call volume ratio</li>
+                            <li><strong>Market Volatility:</strong> VIX levels</li>
+                            <li><strong>Safe Haven Demand:</strong> Stocks vs Treasury bonds</li>
+                            <li><strong>Junk Bond Demand:</strong> Spread between junk bonds and Treasuries</li>
+                        </ul>
+                        
+                        <p><strong>Scale (0-100):</strong></p>
+                        <ul>
+                            <li><strong>0-25:</strong> <span class="fg-level extreme-fear">Extreme Fear</span> - Potential buying opportunity</li>
+                            <li><strong>26-45:</strong> <span class="fg-level fear">Fear</span> - Cautious sentiment, oversold conditions possible</li>
+                            <li><strong>46-55:</strong> <span class="fg-level neutral">Neutral</span> - Balanced market sentiment</li>
+                            <li><strong>56-75:</strong> <span class="fg-level greed">Greed</span> - Optimistic sentiment, overbought conditions possible</li>
+                            <li><strong>76-100:</strong> <span class="fg-level extreme-greed">Extreme Greed</span> - Potential warning sign, consider profit-taking</li>
+                        </ul>
+                        
+                        <p><strong>Contrarian Indicator:</strong></p>
+                        <ul>
+                            <li>Extreme Fear often precedes market bottoms</li>
+                            <li>Extreme Greed often precedes market tops</li>
+                            <li>Works best at extremes (&lt;20 or &gt;80)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Historical Trends -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">📊</span>
+                        <h3>5-Day Historical Trends</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What it is:</strong> Automated tracking of key metrics over the last 5 trading days to visualize momentum and trend direction.</p>
+                        
+                        <p><strong>Data Collection (AppScript):</strong></p>
+                        <ul>
+                            <li>Runs automatically daily at 4:30 PM ET (after market close)</li>
+                            <li>Captures: QQQ price, VIX, 21MA vs 50MA spread, Fear & Greed</li>
+                            <li>Stores in "Historical_Data" sheet</li>
+                            <li>Maintains rolling 5-day window</li>
+                            <li>Data shifts daily: Day 5→Day 4, Day 4→Day 3, etc.</li>
+                        </ul>
+                        
+                        <p><strong>Visual Charts:</strong></p>
+                        <ul>
+                            <li><strong>Green gradient:</strong> Uptrend (latest value &gt; oldest value)</li>
+                            <li><strong>Red gradient:</strong> Downtrend (latest value &lt; oldest value)</li>
+                            <li>Shows Min/Current/Max labels for context</li>
+                            <li>Helps identify momentum shifts before they become obvious</li>
+                        </ul>
+                        
+                        <p><strong>Why 5 Days?</strong></p>
+                        <ul>
+                            <li>Captures full trading week</li>
+                            <li>Removes weekend noise</li>
+                            <li>Shows short-term momentum without excessive lag</li>
+                            <li>Complements longer-term moving averages</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Multi-Asset Dashboard -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">🌐</span>
+                        <h3>Multi-Asset Comparison</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What it is:</strong> Simultaneous tracking of multiple asset classes to identify sector rotation, risk-on/risk-off behavior, and relative performance.</p>
+                        
+                        <p><strong>Assets Tracked:</strong></p>
+                        <ul>
+                            <li><strong>QQQ (Invesco QQQ Trust):</strong>
+                                <ul>
+                                    <li>Tracks Nasdaq-100 Index</li>
+                                    <li>Technology and growth focus</li>
+                                    <li>Higher volatility, higher return potential</li>
+                                    <li>Primary focus of this dashboard</li>
+                                </ul>
+                            </li>
+                            <li><strong>SPY (SPDR S&P 500 ETF):</strong>
+                                <ul>
+                                    <li>Tracks S&P 500 Index</li>
+                                    <li>Broad market benchmark</li>
+                                    <li>More diversified than QQQ</li>
+                                    <li>Compare to see if tech outperforming/underperforming</li>
+                                </ul>
+                            </li>
+                            <li><strong>TLT (iShares 20+ Year Treasury Bond ETF):</strong>
+                                <ul>
+                                    <li>Long-duration US Treasury bonds</li>
+                                    <li>Safe-haven asset</li>
+                                    <li>Inverse correlation to stocks in risk-off environments</li>
+                                    <li>Rising TLT + falling stocks = flight to safety</li>
+                                </ul>
+                            </li>
+                            <li><strong>GLD (SPDR Gold Shares):</strong>
+                                <ul>
+                                    <li>Physical gold holdings</li>
+                                    <li>Inflation hedge</li>
+                                    <li>Alternative safe-haven to bonds</li>
+                                    <li>Rising GLD can signal inflation concerns or uncertainty</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <p><strong>Rotation Signals:</strong></p>
+                        <ul>
+                            <li><strong>Risk-On:</strong> QQQ↑, SPY↑, TLT↓, GLD↓ (investors seeking returns)</li>
+                            <li><strong>Risk-Off:</strong> QQQ↓, SPY↓, TLT↑, GLD↑ (investors seeking safety)</li>
+                            <li><strong>Tech Rotation:</strong> QQQ outperforming SPY significantly</li>
+                            <li><strong>Value Rotation:</strong> SPY outperforming QQQ significantly</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- AI Analysis -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">🤖</span>
+                        <h3>AI-Powered Analysis (Claude)</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>What it is:</strong> Real-time market analysis powered by Anthropic's Claude AI, combining all dashboard metrics into actionable insights.</p>
+                        
+                        <p><strong>Analysis Process:</strong></p>
+                        <ul>
+                            <li><strong>Data Input:</strong> All current metrics (price, MAs, VIX, sentiment, risk score, cross status)</li>
+                            <li><strong>Context Integration:</strong> Historical trends, market conditions, volatility environment</li>
+                            <li><strong>Pattern Recognition:</strong> Identifies setups similar to past market conditions</li>
+                            <li><strong>Risk Assessment:</strong> Evaluates current risk/reward profile</li>
+                            <li><strong>Strategic Output:</strong> Provides market positioning guidance</li>
+                        </ul>
+                        
+                        <p><strong>Analysis Structure:</strong></p>
+                        <ul>
+                            <li><strong>Market Positioning:</strong> High-level stance and opportunity assessment</li>
+                            <li><strong>Current Conditions:</strong> Price action relative to key technical levels</li>
+                            <li><strong>Risk Assessment:</strong> Volatility and sentiment evaluation</li>
+                            <li><strong>Strategic Opportunities:</strong> Specific levels and setups to watch</li>
+                            <li><strong>Action Items:</strong> Tactical positioning recommendations with time horizons</li>
+                        </ul>
+                        
+                        <p><strong>Update Frequency:</strong></p>
+                        <ul>
+                            <li>Refreshes hourly with market data</li>
+                            <li>Adapts to changing market conditions in real-time</li>
+                            <li>Provides consistent framework for decision-making</li>
+                        </ul>
+                        
+                        <p><strong>Use Cases:</strong></p>
+                        <ul>
+                            <li>Quick morning market assessment (30 seconds)</li>
+                            <li>Entry/exit point identification</li>
+                            <li>Position sizing guidance</li>
+                            <li>Risk management decisions</li>
+                            <li>Time horizon planning (3-6 months typical)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Data Sources -->
+                <div class="glossary-card">
+                    <div class="glossary-card-header">
+                        <span class="glossary-emoji">🔗</span>
+                        <h3>Data Sources & Updates</h3>
+                    </div>
+                    <div class="glossary-content">
+                        <p><strong>Data Providers:</strong></p>
+                        <ul>
+                            <li><strong>Google Finance:</strong> Real-time stock prices, moving averages (via Google Sheets formulas)</li>
+                            <li><strong>CBOE:</strong> VIX data (Chicago Board Options Exchange)</li>
+                            <li><strong>CNN Business:</strong> Fear & Greed Index composite data</li>
+                            <li><strong>Historical Data:</strong> Google Apps Script automated collection</li>
+                        </ul>
+                        
+                        <p><strong>Update Schedule:</strong></p>
+                        <ul>
+                            <li><strong>Live Data:</strong> Refreshes every hour during market hours</li>
+                            <li><strong>Historical Data:</strong> Updates daily at 4:30 PM ET</li>
+                            <li><strong>AI Analysis:</strong> Regenerates with each data refresh</li>
+                            <li><strong>Multi-Asset Data:</strong> Updates hourly</li>
+                        </ul>
+                        
+                        <p><strong>Data Pipeline:</strong></p>
+                        <ul>
+                            <li>Google Sheets → Published CSV → Dashboard frontend</li>
+                            <li>Apps Script → Historical_Data sheet → Published CSV → Visual charts</li>
+                            <li>Dashboard → Netlify Function → Claude API → AI Analysis</li>
+                        </ul>
+                        
+                        <p><strong>Reliability:</strong></p>
+                        <ul>
+                            <li>Multiple redundant data sources</li>
+                            <li>Automatic error handling and fallbacks</li>
+                            <li>Mock data generation if sources unavailable</li>
+                            <li>Console logging for troubleshooting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glossary-footer">
+                <p><strong>Disclaimer:</strong> This dashboard provides educational and informational content only. All metrics, analyses, and AI-generated insights are for research purposes and should not be considered financial advice. Past performance does not guarantee future results. Always conduct your own due diligence and consult with qualified financial professionals before making investment decisions. Market conditions can change rapidly, and no indicator or system is foolproof.</p>
+                
+                <p><strong>Technical Stack:</strong> HTML5, CSS3, JavaScript (ES6+), Google Sheets, Google Apps Script, Anthropic Claude AI API, Netlify Functions, GitHub Pages/Netlify Hosting</p>
+                
+                <p><strong>Version:</strong> 2.0 Enhanced | <strong>Last Updated:</strong> November 2024</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding: 20px;">
+            <a href="index.html" class="back-link" style="font-size: 1.1em;">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
