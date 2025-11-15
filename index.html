@@ -216,6 +216,8 @@
             padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
         .card:hover {
             transform: translateY(-5px);
@@ -391,7 +393,7 @@
         
         /* AI Insight Boxes for Cards */
         .ai-insight-box {
-            margin-top: 15px;
+            margin-top: auto;
             padding: 12px;
             background: rgba(102, 126, 234, 0.1);
             border: 1px solid rgba(102, 126, 234, 0.3);
@@ -710,7 +712,8 @@
                             <span class="status-badge" id="mainRiskBadge">--</span>
                         </div>
                         <div id="vixTrend" class="trend-mini"></div>
-                        <div class="ai-insight-box" id="riskAIInsight">
+                        <div style="flex: 1;"></div>
+                        <div class="ai-insight-box" id="riskAIInsight" style="margin-top: auto;">
                             <div class="ai-insight-header">
                                 <span class="ai-badge-mini">AI</span>
                                 <span>Quick Insight</span>
