@@ -1105,10 +1105,10 @@
         }
         
         async function fetchMultiAssetData() {
-            // Updated to show VXX (Volatility) and IWM (Small Caps) - more relevant for tech risk monitoring
+            // Updated asset selection: BTC for crypto exposure, IWM for risk appetite
             return {
                 SPY: { price: 580.45, change: 0.45, change_pct: 0.08, ma21: 575.20, ma50: 568.30 },
-                VXX: { price: 52.30, change: 1.25, change_pct: 2.45, ma21: 50.80, ma50: 49.20 },
+                BTC: { price: 91250.00, change: 1850.00, change_pct: 2.07, ma21: 89800.00, ma50: 87500.00 },
                 IWM: { price: 218.45, change: -0.85, change_pct: -0.39, ma21: 220.10, ma50: 215.80 }
             };
         }
@@ -1145,7 +1145,7 @@
                 const arrow = data.change >= 0 ? '▲' : '▼';
                 let description = '';
                 if (symbol === 'SPY') description = 'S&P 500 ETF';
-                else if (symbol === 'VXX') description = 'Volatility ETF';
+                else if (symbol === 'BTC') description = 'Bitcoin';
                 else if (symbol === 'IWM') description = 'Russell 2000 ETF';
                 
                 return `
