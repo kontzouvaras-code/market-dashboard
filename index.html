@@ -1,14 +1,4 @@
 
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.1"
-  }
-}
-</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +18,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #111 0%, #000 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #fff;
             padding: 20px;
             min-height: 100vh;
@@ -113,7 +103,6 @@
             font-weight: 600;
             font-size: 0.9em;
             transition: all 0.3s ease;
-            cursor: pointer;
         }
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -378,7 +367,7 @@
         .mid-risk { color: #ffa502; }
         .low-risk { color: #26de81; }
         .high-risk { color: #ff6b6b; }
-        .critical-risk { color: #ff4757; }
+        .critical-risk { color: #8B0000; }
         
         /* Badges */
         .status-badge {
@@ -401,14 +390,14 @@
             box-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
         }
         .badge-critical-risk {
-            background: rgba(255, 71, 87, 0.3);
-            color: #ff4757;
-            border: 2px solid #ff4757;
+            background: rgba(139, 0, 0, 0.3);
+            color: #8B0000;
+            border: 2px solid #8B0000;
         }
         .badge-high-risk {
-            background: rgba(255, 107, 107, 0.3);
-            color: #ff6b6b;
-            border: 2px solid #ff6b6b;
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 2px solid #ff4757;
         }
         .badge-mid-risk {
             background: rgba(255, 165, 2, 0.2);
@@ -430,26 +419,6 @@
             letter-spacing: 0.5px;
         }
         
-        /* AI Insight in Cards */
-        .card-ai-insight {
-            font-size: 0.85em;
-            color: #aaa;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(0, 212, 255, 0.05);
-            border-left: 3px solid #00d4ff;
-            border-radius: 4px;
-            line-height: 1.6;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .card-ai-insight::before {
-            content: '🤖';
-            font-size: 1.2em;
-            align-self: flex-start;
-        }
-
         /* Detailed Analysis */
         .summary-box {
             background: rgba(255, 255, 255, 0.05);
@@ -471,9 +440,6 @@
         }
         .analysis-section {
             margin-bottom: 20px;
-        }
-        .analysis-section:last-child {
-            margin-bottom: 0;
         }
         .section-title {
             color: #00d4ff;
@@ -624,7 +590,7 @@
             border: 1px solid #ff6b6b;
         }
         .risk-label.critical {
-            background: rgba(255, 71, 87, 0.3);
+            background: rgba(139, 0, 0, 0.2);
             color: #ff4757;
             border: 1px solid #ff4757;
         }
@@ -681,7 +647,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <div class="header-logo">
                 <div class="logo-icon">
@@ -698,997 +663,1241 @@
                 <strong>Purpose:</strong> Risk monitoring and technical analysis for informational purposes only. Not financial advice.
             </div>
             <nav class="navigation">
-                <a id="nav-dashboard" class="nav-link active">Dashboard</a>
-                <a id="nav-glossary" class="nav-link">Glossary</a>
+                <a href="#/" class="nav-link">Dashboard</a>
+                <a href="#/glossary" class="nav-link">Glossary</a>
             </nav>
+            <div class="last-updated" id="lastUpdated">Loading...</div>
         </div>
 
-        <div id="app-content">
-            <!-- Loading and Error states -->
-            <div id="loading" class="loading">Loading market data...</div>
-            <div id="error" class="error" style="display: none;"></div>
-
-            <!-- Dashboard Page -->
-            <div id="page-dashboard" style="display: none;">
-                <div class="last-updated" id="lastUpdated">Last Updated: ...</div>
-    
-                <div class="exec-summary">
-                    <div class="exec-summary-header">
-                        <span>📋</span>
-                        Executive Summary
-                        <span class="tldr-badge">TL;DR</span>
-                    </div>
-                    <div class="exec-summary-content" id="execSummary"></div>
+        <div id="loading" class="loading">Loading market data...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="page-dashboard">
+            <!-- Executive Summary -->
+            <div class="exec-summary">
+                <div class="exec-summary-header">
+                    <span>📋</span>
+                    Executive Summary
+                    <span class="tldr-badge">TL;DR</span>
                 </div>
-                
-                <div class="risk-meter-container">
-                    <div class="risk-meter-title">🎯 Composite Risk Score</div>
-                    <div class="risk-meter">
-                        <div class="risk-meter-fill" id="riskMeterFill"></div>
-                        <div class="risk-meter-label" id="riskMeterLabel"></div>
-                    </div>
-                    <div class="risk-breakdown" id="riskBreakdown"></div>
-                </div>
-                
-                <div class="multi-asset-section">
-                    <div class="section-header">🌐 Multi-Asset Overview</div>
-                    <div class="dashboard" id="multiAssetGrid"></div>
-                </div>
-                
-                <div class="multi-asset-section">
-                    <div class="section-header">📈 QQQ Detailed Metrics</div>
-                    <div class="dashboard">
-                        <div class="card">
-                            <div class="card-title">Advanced Risk Assessment</div>
-                            <div class="card-subtitle">Multi-factor algorithmic risk evaluation</div>
-                            <div style="text-align: center; margin: 15px 0;" id="riskBadgeContainer"></div>
-                            <div class="card-ai-insight" id="riskCardInsightContainer" style="display:none;">
-                                <span id="riskCardInsight"></span>
-                            </div>
-                            <div class="trend-mini" id="vixTrend"></div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-title">Golden/Death Cross Analysis</div>
-                            <div class="card-subtitle">21-Day vs 50-Day MA crossover</div>
-                            <div style="text-align: center; margin: 15px 0;" id="crossBadgeContainer"></div>
-                            <div class="card-ai-insight" id="momentumCardInsightContainer" style="display:none;">
-                                <span id="momentumCardInsight"></span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">Short-term Trend (21 vs 50)</span>
-                                <span class="metric-value" id="crossTrendValue">--</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">QQQ Distance from 50MA</span>
-                                <span class="metric-value" id="qqq50maMain">--</span>
-                            </div>
-                            <div class="trend-mini" id="maTrend"></div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-title">QQQ Moving Averages</div>
-                            <div class="card-subtitle">Price relative to key MAs</div>
-                            <div class="metric">
-                                <span class="metric-label">Current Price</span>
-                                <span class="metric-value" id="qqqPrice">--</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">21-Day MA</span>
-                                <span class="metric-value" id="qqq21">--</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">50-Day MA</span>
-                                <span class="metric-value" id="qqq50">--</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">21 vs 50 Trend</span>
-                                <span class="metric-value" id="ma21vs50">--</span>
-                            </div>
-                            <div class="trend-mini" id="priceTrend"></div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-title">Market Sentiment & Volatility</div>
-                            <div class="card-subtitle">Fear indicators and sentiment composite</div>
-                            <div class="metric">
-                                <span class="metric-label">VIX (Fear Index)</span>
-                                <span class="metric-value" id="vixEod">--</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">VIX 10-Day MA</span>
-                                <span class="metric-value" id="vix10ma">--</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">VIX vs 10-Day Avg</span>
-                                <span class="metric-value" id="vixVs10d">--</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">CNN Fear & Greed</span>
-                                <span class="metric-value" id="fearGreedValue">--</span>
-                            </div>
-                            <div style="text-align: center; margin: 15px 0;" id="fearGreedBadgeContainer"></div>
-                            <div class="trend-mini" id="fearGreedTrend"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="multi-asset-section">
-                    <div class="section-header">📈 5-Day Trend Analysis</div>
-                    <div class="dashboard">
-                        <div class="card">
-                            <div class="visual-chart-container">
-                                <div class="chart-title">QQQ Price Movement</div>
-                                <canvas id="qqqChart" class="mini-chart"></canvas>
-                                <div class="chart-legend">
-                                    <span id="qqqChartMin">--</span>
-                                    <span id="qqqChartCurrent" style={{color: '#00d4ff', fontWeight: 600}}>Current: --</span>
-                                    <span id="qqqChartMax">--</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="visual-chart-container">
-                                <div class="chart-title">21MA vs 50MA Spread</div>
-                                <canvas id="maChart" class="mini-chart"></canvas>
-                                <div class="chart-legend">
-                                    <span id="maChartMin">--</span>
-                                    <span id="maChartCurrent" style={{color: '#00d4ff', fontWeight: 600}}>Current: --</span>
-                                    <span id="maChartMax">--</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="visual-chart-container">
-                                <div class="chart-title">Fear & Greed Index</div>
-                                <canvas id="fgChart" class="mini-chart"></canvas>
-                                <div class="chart-legend">
-                                    <span id="fgChartMin">--</span>
-                                    <span id="fgChartCurrent" style={{color: '#00d4ff', fontWeight: 600}}>Current: --</span>
-                                    <span id="fgChartMax">--</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="summary-box">
-                    <div class="detailed-analysis-header">
-                        📊 Detailed Market Analysis
-                        <span class="ai-badge" style="margin-left: 10px;">GEMINI AI</span>
-                    </div>
-                    <div id="detailedAnalysis"></div>
+                <div class="exec-summary-content" id="execSummary">
+                    Analyzing market conditions...
                 </div>
             </div>
+            
+            <!-- Risk Score Meter -->
+            <div class="risk-meter-container">
+                <div class="risk-meter-title">🎯 Composite Risk Score</div>
+                <div class="risk-meter">
+                    <div class="risk-meter-fill" id="riskMeterFill"></div>
+                    <div class="risk-meter-label" id="riskMeterLabel">Calculating...</div>
+                </div>
+                <div class="risk-breakdown" id="riskBreakdown"></div>
+            </div>
+            
+            <!-- Multi-Asset Dashboard -->
+            <div class="multi-asset-section">
+                <div class="section-header">🌐 Multi-Asset Overview</div>
+                <div class="dashboard" id="multiAssetGrid"></div>
+            </div>
+            
+            <!-- QQQ Primary Dashboard -->
+            <div class="multi-asset-section">
+                <div class="section-header">📈 QQQ Detailed Metrics</div>
+                <div class="dashboard">
+                    <div class="card">
+                        <div class="card-title">Advanced Risk Assessment</div>
+                        <div class="card-subtitle">Multi-factor algorithmic risk evaluation</div>
+                        <div style="text-align: center; margin: 15px 0;">
+                            <span class="status-badge" id="mainRiskBadge">--</span>
+                        </div>
+                        <div id="vixTrend" class="trend-mini"></div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Golden/Death Cross Analysis</div>
+                        <div class="card-subtitle">21-Day vs 50-Day MA crossover</div>
+                        <div style="text-align: center; margin: 15px 0;">
+                            <span class="status-badge" id="mainCrossBadge">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Short-term Trend (21 vs 50)</span>
+                            <span class="metric-value" id="crossTrendValue">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">QQQ Distance from 50MA</span>
+                            <span class="metric-value" id="qqq50maMain">--</span>
+                        </div>
+                        <div id="maTrend" class="trend-mini"></div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">QQQ Moving Averages</div>
+                        <div class="card-subtitle">Price relative to key MAs</div>
+                        <div class="metric">
+                            <span class="metric-label">Current Price</span>
+                            <span class="metric-value" id="qqqPrice">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">21-Day MA</span>
+                            <span class="metric-value" id="qqq21">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">50-Day MA</span>
+                            <span class="metric-value" id="qqq50">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">21 vs 50 Trend</span>
+                            <span class="metric-value" id="ma21vs50">--</span>
+                        </div>
+                        <div id="priceTrend" class="trend-mini"></div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Market Sentiment & Volatility</div>
+                        <div class="card-subtitle">Fear indicators and sentiment composite</div>
+                        <div class="metric">
+                            <span class="metric-label">VIX (Fear Index)</span>
+                            <span class="metric-value" id="vixEod">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">VIX 10-Day MA</span>
+                            <span class="metric-value" id="vix10ma">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">VIX vs 10-Day Avg</span>
+                            <span class="metric-value" id="vixVs10d">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">CNN Fear & Greed</span>
+                            <span class="metric-value" id="fearGreedValue">--</span>
+                        </div>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <span class="status-badge" id="fearGreedBadge">--</span>
+                        </div>
+                        <div id="fearGreedTrend" class="trend-mini"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visual Trend Charts -->
+            <div class="multi-asset-section">
+                <div class="section-header">📈 5-Day Trend Analysis</div>
+                <div class="dashboard">
+                    <div class="card">
+                        <div class="visual-chart-container">
+                            <div class="chart-title">QQQ Price Movement</div>
+                            <canvas id="qqqChart" class="mini-chart"></canvas>
+                            <div class="chart-legend">
+                                <span id="qqqChartMin">--</span>
+                                <span id="qqqChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
+                                <span id="qqqChartMax">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="visual-chart-container">
+                            <div class="chart-title">21MA vs 50MA Spread</div>
+                            <canvas id="maChart" class="mini-chart"></canvas>
+                            <div class="chart-legend">
+                                <span id="maChartMin">--</span>
+                                <span id="maChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
+                                <span id="maChartMax">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="visual-chart-container">
+                            <div class="chart-title">Fear & Greed Index</div>
+                            <canvas id="fgChart" class="mini-chart"></canvas>
+                            <div class="chart-legend">
+                                <span id="fgChartMin">--</span>
+                                <span id="fgChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
+                                <span id="fgChartMax">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detailed Analysis -->
+            <div class="summary-box">
+                <div class="detailed-analysis-header">
+                    📊 Detailed Market Analysis
+                    <span class="ai-badge" style="margin-left: 10px;">CLAUDE AI</span>
+                </div>
+                <div id="detailedAnalysis">Analyzing market conditions...</div>
+            </div>
+        </div>
 
-            <!-- Glossary Page -->
-            <div id="page-glossary" style="display: none;">
-                 <div class="glossary-section">
-                    <div class="glossary-header">
-                        <span class="glossary-icon">📚</span>
-                        <h2>Methodology & Intelligence Glossary</h2>
-                    </div>
-                    
-                    <div class="glossary-intro">
-                        This dashboard combines multiple technical indicators, sentiment analysis, and AI-powered insights to provide comprehensive market risk assessment. Below is a detailed explanation of all metrics, calculations, and intelligence systems.
-                    </div>
-                    
-                    <div class="glossary-grid">
-                        {/* Risk Score Meter */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">🎯</span>
-                                <h3>Composite Risk Score (0-100)</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What it is:</strong> A proprietary algorithm that combines four key market risk factors into a single, easy-to-understand score.</p>
-                                
-                                <p><strong>Calculation:</strong></p>
-                                <ul>
-                                    <li><strong>VIX Component (0-30 points):</strong>
-                                        <ul>
-                                            <li>VIX 10MA ≥30: 30 points (Critical volatility)</li>
-                                            <li>VIX 10MA ≥25: 22 points (High volatility)</li>
-                                            <li>VIX 10MA ≥20: 15 points (Elevated volatility)</li>
-                                            <li>VIX 10MA &lt;20: 5 points (Normal volatility)</li>
-                                        </ul>
-                                    </li>
-                                    <li><strong>Price Position Component (0-25 points):</strong>
-                                        <ul>
-                                            <li>Below both 21MA & 50MA: 25 points (Weak trend)</li>
-                                            <li>Below 21MA only: 15 points (Short-term weakness)</li>
-                                            <li>Below 50MA only: 10 points (Mid-term weakness)</li>
-                                            <li>Above all MAs: 0 points (Strong trend)</li>
-                                        </ul>
-                                    </li>
-                                    <li><strong>Momentum Component (0-20 points):</strong>
-                                        <ul>
-                                            <li>Death Cross (21MA &lt; 50MA): 20 points (Bearish)</li>
-                                            <li>Weak Golden Cross (&lt;1% gap): 10 points (Neutral)</li>
-                                            <li>Strong Golden Cross: 0 points (Bullish)</li>
-                                        </ul>
-                                    </li>
-                                    <li><strong>Sentiment Component (0-25 points):</strong>
-                                        <ul>
-                                            <li>Extreme Fear (≤25): 20 points (Oversold conditions)</li>
-                                            <li>Fear (≤45): 12 points (Cautious sentiment)</li>
-                                            <li>Extreme Greed (≥75): 15 points (Overbought conditions)</li>
-                                            <li>Neutral: 5 points (Balanced sentiment)</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                
-                                <p><strong>Interpretation:</strong></p>
-                                <ul>
-                                    <li><span class="risk-label low">0-25: LOW RISK</span> - Favorable conditions for deploying capital</li>
-                                    <li><span class="risk-label moderate">26-50: MODERATE RISK</span> - Proceed with caution, consider scaling positions</li>
-                                    <li><span class="risk-label high">51-75: HIGH RISK</span> - Reduce exposure, focus on preservation</li>
-                                    <li><span class="risk-label critical">76-100: CRITICAL RISK</span> - Defensive positioning recommended</li>
-                                </ul>
-                            </div>
+        <div id="page-glossary" style="display: none;">
+            <!-- Glossary & Methodology Section -->
+            <div class="glossary-section">
+                <div class="glossary-header">
+                    <span class="glossary-icon">📚</span>
+                    <h2>Methodology & Intelligence Glossary</h2>
+                </div>
+                
+                <div class="glossary-intro">
+                    This dashboard combines multiple technical indicators, sentiment analysis, and AI-powered insights to provide comprehensive market risk assessment. Below is a detailed explanation of all metrics, calculations, and intelligence systems.
+                </div>
+                
+                <div class="glossary-grid">
+                    <!-- Risk Score Meter -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">🎯</span>
+                            <h3>Composite Risk Score (0-100)</h3>
                         </div>
-                        
-                        {/* Moving Averages */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">📈</span>
-                                <h3>Moving Averages (MA)</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What they are:</strong> Statistical calculations that smooth price data by creating a constantly updated average price over specific time periods.</p>
-                                
-                                <p><strong>21-Day Moving Average (21MA):</strong></p>
-                                <ul>
-                                    <li>Short-term trend indicator</li>
-                                    <li>More responsive to recent price changes</li>
-                                    <li>Used for tactical entry/exit points</li>
-                                    <li>Formula: Sum of last 21 closing prices ÷ 21</li>
-                                </ul>
-                                
-                                <p><strong>50-Day Moving Average (50MA):</strong></p>
-                                <ul>
-                                    <li>Intermediate-term trend indicator</li>
-                                    <li>Less sensitive to daily volatility</li>
-                                    <li>Key support/resistance level</li>
-                                    <li>Formula: Sum of last 50 closing prices ÷ 50</li>
-                                </ul>
-                                
-                                <p><strong>Price vs MA Distance:</strong></p>
-                                <ul>
-                                    <li>Calculated as: (Current Price - MA) / MA × 100</li>
-                                    <li>Positive % = Price above MA (bullish)</li>
-                                    <li>Negative % = Price below MA (bearish)</li>
-                                    <li>Extreme values (&gt;5% or &lt;-5%) suggest overextension</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        {/* Golden/Death Cross */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">⚡</span>
-                                <h3>Golden Cross / Death Cross</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What it is:</strong> A powerful momentum indicator based on the relationship between short-term (21-day) and intermediate-term (50-day) moving averages.</p>
-                                
-                                <p><strong>Golden Cross (Bullish):</strong></p>
-                                <ul>
-                                    <li>Occurs when 21MA crosses above 50MA</li>
-                                    <li>Signals shift to upward momentum</li>
-                                    <li>Historically precedes sustained rallies</li>
-                                    <li>Confirmation: 21MA should be &gt;1% above 50MA</li>
-                                </ul>
-                                
-                                <p><strong>Death Cross (Bearish):</strong></p>
-                                <ul>
-                                    <li>Occurs when 21MA crosses below 50MA</li>
-                                    <li>Signals shift to downward momentum</li>
-                                    <li>Warning of potential trend reversal</li>
-                                    <li>Historically precedes market corrections</li>
-                                </ul>
-                                
-                                <p><strong>Dashboard Metric (21MA vs 50MA %):</strong></p>
-                                <ul>
-                                    <li>Positive value: Golden Cross territory</li>
-                                    <li>Negative value: Death Cross territory</li>
-                                    <li>Magnitude shows strength of trend</li>
-                                    <li>Formula: (21MA - 50MA) / 50MA × 100</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        {/* VIX */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">💥</span>
-                                <h3>VIX (Volatility Index)</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What it is:</strong> The CBOE Volatility Index, often called the "Fear Index," measures the market's expectation of 30-day forward volatility based on S&P 500 options pricing.</p>
-                                
-                                <p><strong>Interpretation Levels:</strong></p>
-                                <ul>
-                                    <li><strong>&lt;15:</strong> <span class="vix-level low">Low volatility</span> - Complacency, potential for surprise moves</li>
-                                    <li><strong>15-20:</strong> <span class="vix-level normal">Normal range</span> - Typical market conditions</li>
-                                    <li><strong>20-30:</strong> <span class="vix-level elevated">Elevated</span> - Increased uncertainty, cautious positioning</li>
-                                    <li><strong>30-40:</strong> <span class="vix-level high">High</span> - Significant fear, potential opportunities</li>
-                                    <li><strong>&gt;40:</strong> <span class="vix-level extreme">Extreme panic</span> - Historical buying opportunities</li>
-                                </ul>
-                                
-                                <p><strong>VIX 10-Day Moving Average:</strong></p>
-                                <ul>
-                                    <li>Smooths daily VIX fluctuations</li>
-                                    <li>Better gauge of sustained volatility trends</li>
-                                    <li>Used in risk score calculation</li>
-                                </ul>
-                                
-                                <p><strong>VIX vs 10-Day Average:</strong></p>
-                                <ul>
-                                    <li>Shows if current fear is increasing or decreasing</li>
-                                    <li>Positive % = Fear rising (volatility spike)</li>
-                                    <li>Negative % = Fear subsiding (calm returning)</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        {/* Fear & Greed */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">🎭</span>
-                                <h3>CNN Fear & Greed Index</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What it is:</strong> A composite sentiment indicator that measures investor emotion and behavior across seven different market factors.</p>
-                                
-                                <p><strong>Seven Components:</strong></p>
-                                <ul>
-                                    <li><strong>Market Momentum:</strong> S&P 500 vs 125-day MA</li>
-                                    <li><strong>Stock Price Strength:</strong> Stocks at 52-week highs vs lows</li>
-                                    <li><strong>Stock Price Breadth:</strong> NYSE advancing vs declining volume</li>
-                                    <li><strong>Put/Call Options:</strong> Put volume vs call volume ratio</li>
-                                    <li><strong>Market Volatility:</strong> VIX levels</li>
-                                    <li><strong>Safe Haven Demand:</strong> Stocks vs Treasury bonds</li>
-                                    <li><strong>Junk Bond Demand:</strong> Spread between junk bonds and Treasuries</li>
-                                </ul>
-                                
-                                <p><strong>Scale (0-100):</strong></p>
-                                <ul>
-                                    <li><strong>0-25:</strong> <span class="fg-level extreme-fear">Extreme Fear</span> - Potential buying opportunity</li>
-                                    <li><strong>26-45:</strong> <span class="fg-level fear">Fear</span> - Cautious sentiment, oversold conditions possible</li>
-                                    <li><strong>46-55:</strong> <span class="fg-level neutral">Neutral</span> - Balanced market sentiment</li>
-                                    <li><strong>56-75:</strong> <span class="fg-level greed">Greed</span> - Optimistic sentiment, overbought conditions possible</li>
-                                    <li><strong>76-100:</strong> <span class="fg-level extreme-greed">Extreme Greed</span> - Potential warning sign, consider profit-taking</li>
-                                </ul>
-                                
-                                <p><strong>Contrarian Indicator:</strong></p>
-                                <ul>
-                                    <li>Extreme Fear often precedes market bottoms</li>
-                                    <li>Extreme Greed often precedes market tops</li>
-                                    <li>Works best at extremes (&lt;20 or &gt;80)</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        {/* Historical Trends */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">📊</span>
-                                <h3>5-Day Historical Trends</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What it is:</strong> Automated tracking of key metrics over the last 5 trading days to visualize momentum and trend direction.</p>
-                                
-                                <p><strong>Data Collection (AppScript):</strong></p>
-                                <ul>
-                                    <li>Runs automatically daily at 4:30 PM ET (after market close)</li>
-                                    <li>Captures: QQQ price, VIX, 21MA vs 50MA spread, Fear & Greed</li>
-                                    <li>Stores in "Historical_Data" sheet</li>
-                                    <li>Maintains rolling 5-day window</li>
-                                    <li>Data shifts daily: Day 5→Day 4, Day 4→Day 3, etc.</li>
-                                </ul>
-                                
-                                <p><strong>Visual Charts:</strong></p>
-                                <ul>
-                                    <li><strong>Green gradient:</strong> Uptrend (latest value &gt; oldest value)</li>
-                                    <li><strong>Red gradient:</strong> Downtrend (latest value &lt; oldest value)</li>
-                                    <li>Shows Min/Current/Max labels for context</li>
-                                    <li>Helps identify momentum shifts before they become obvious</li>
-                                </ul>
-                                
-                                <p><strong>Why 5 Days?</strong></p>
-                                <ul>
-                                    <li>Captures full trading week</li>
-                                    <li>Removes weekend noise</li>
-                                    <li>Shows short-term momentum without excessive lag</li>
-                                    <li>Complements longer-term moving averages</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        {/* Multi-Asset Dashboard */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">🌐</span>
-                                <h3>Multi-Asset Comparison</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What it is:</strong> Simultaneous tracking of multiple asset classes to identify sector rotation, risk-on/risk-off behavior, and relative performance.</p>
-                                
-                                <p><strong>Assets Tracked:</strong></p>
-                                <ul>
-                                    <li><strong>QQQ (Invesco QQQ Trust):</strong>
-                                        <ul>
-                                            <li>Tracks Nasdaq-100 Index</li>
-                                            <li>Technology and growth focus</li>
-                                            <li>Higher volatility, higher return potential</li>
-                                            <li>Primary focus of this dashboard</li>
-                                        </ul>
-                                    </li>
-                                    <li><strong>SPY (SPDR S&P 500 ETF):</strong>
-                                        <ul>
-                                            <li>Tracks S&P 500 Index</li>
-                                            <li>Broad market benchmark</li>
-                                            <li>More diversified than QQQ</li>
-                                            <li>Compare to see if tech outperforming/underperforming</li>
-                                        </ul>
-                                    </li>
-                                    <li><strong>TLT (iShares 20+ Year Treasury Bond ETF):</strong>
-                                        <ul>
-                                            <li>Long-duration US Treasury bonds</li>
-                                            <li>Safe-haven asset</li>
-                                            <li>Inverse correlation to stocks in risk-off environments</li>
-                                            <li>Rising TLT + falling stocks = flight to safety</li>
-                                        </ul>
-                                    </li>
-                                    <li><strong>GLD (SPDR Gold Shares):</strong>
-                                        <ul>
-                                            <li>Physical gold holdings</li>
-                                            <li>Inflation hedge</li>
-                                            <li>Alternative safe-haven to bonds</li>
-                                            <li>Rising GLD can signal inflation concerns or uncertainty</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                
-                                <p><strong>Rotation Signals:</strong></p>
-                                <ul>
-                                    <li><strong>Risk-On:</strong> QQQ↑, SPY↑, TLT↓, GLD↓ (investors seeking returns)</li>
-                                    <li><strong>Risk-Off:</strong> QQQ↓, SPY↓, TLT↑, GLD↑ (investors seeking safety)</li>
-                                    <li><strong>Tech Rotation:</strong> QQQ outperforming SPY significantly</li>
-                                    <li><strong>Value Rotation:</strong> SPY outperforming QQQ significantly</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        {/* AI Analysis */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">🤖</span>
-                                <h3>AI-Powered Analysis (Gemini)</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>What it is:</strong> Real-time market analysis powered by Google's Gemini AI, combining all dashboard metrics into actionable insights.</p>
-                                
-                                <p><strong>Analysis Process:</strong></p>
-                                <ul>
-                                    <li><strong>Data Input:</strong> All current metrics (price, MAs, VIX, sentiment, risk score, cross status)</li>
-                                    <li><strong>Context Integration:</strong> Historical trends, market conditions, volatility environment</li>
-                                    <li><strong>Pattern Recognition:</strong> Identifies setups similar to past market conditions</li>
-                                    <li><strong>Risk Assessment:</strong> Evaluates current risk/reward profile</li>
-                                    <li><strong>Strategic Output:</strong> Provides market positioning guidance in a structured JSON format.</li>
-                                </ul>
-                                
-                                <p><strong>Analysis Structure:</strong></p>
-                                <ul>
-                                    <li><strong>Executive Summary:</strong> High-level stance and opportunity assessment.</li>
-                                    <li><strong>Card-Specific Insights:</strong> Concise, one-sentence summaries for Risk and Momentum cards.</li>
-                                    <li><strong>Detailed Breakdown:</strong> In-depth analysis of conditions, risks, and opportunities.</li>
-                                </ul>
-                                
-                                <p><strong>Update Frequency:</strong></p>
-                                <ul>
-                                    <li>Refreshes hourly with market data</li>
-                                    <li>Adapts to changing market conditions in real-time</li>
-                                    <li>Provides consistent framework for decision-making</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        {/* Data Sources */}
-                        <div class="glossary-card">
-                            <div class="glossary-card-header">
-                                <span class="glossary-emoji">🔗</span>
-                                <h3>Data Sources & Updates</h3>
-                            </div>
-                            <div class="glossary-content">
-                                <p><strong>Data Providers:</strong></p>
-                                <ul>
-                                    <li><strong>Google Finance:</strong> Real-time stock prices, moving averages (via Google Sheets formulas)</li>
-                                    <li><strong>CBOE:</strong> VIX data (Chicago Board Options Exchange)</li>
-                                    <li><strong>CNN Business:</strong> Fear & Greed Index composite data</li>
-                                    <li><strong>Historical Data:</strong> Google Apps Script automated collection</li>
-                                </ul>
-                                
-                                <p><strong>Update Schedule:</strong></p>
-                                <ul>
-                                    <li><strong>Live Data:</strong> Refreshes every hour during market hours</li>
-                                    <li><strong>Historical Data:</strong> Updates daily at 4:30 PM ET</li>
-                                    <li><strong>AI Analysis:</strong> Regenerates with each data refresh</li>
-                                    <li><strong>Multi-Asset Data:</strong> Updates hourly</li>
-                                </ul>
-                                
-                                <p><strong>Data Pipeline:</strong></p>
-                                <ul>
-                                    <li>Google Sheets → Published CSV → Dashboard frontend</li>
-                                    <li>Dashboard → Google Gemini API → AI Analysis</li>
-                                </ul>
-                                
-                                <p><strong>Reliability:</strong></p>
-                                <ul>
-                                    <li>Multiple redundant data sources</li>
-                                    <li>Automatic error handling and fallbacks</li>
-                                    <li>Console logging for troubleshooting</li>
-                                </ul>
-                            </div>
+                        <div class="glossary-content">
+                            <p><strong>What it is:</strong> A proprietary algorithm that combines four key market risk factors into a single, easy-to-understand score.</p>
+                            
+                            <p><strong>Calculation:</strong></p>
+                            <ul>
+                                <li><strong>VIX Component (0-30 points):</strong>
+                                    <ul>
+                                        <li>VIX 10MA ≥30: 30 points (Critical volatility)</li>
+                                        <li>VIX 10MA ≥25: 22 points (High volatility)</li>
+                                        <li>VIX 10MA ≥20: 15 points (Elevated volatility)</li>
+                                        <li>VIX 10MA &lt;20: 5 points (Normal volatility)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Price Position Component (0-25 points):</strong>
+                                    <ul>
+                                        <li>Below both 21MA & 50MA: 25 points (Weak trend)</li>
+                                        <li>Below 21MA only: 15 points (Short-term weakness)</li>
+                                        <li>Below 50MA only: 10 points (Mid-term weakness)</li>
+                                        <li>Above all MAs: 0 points (Strong trend)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Momentum Component (0-20 points):</strong>
+                                    <ul>
+                                        <li>Death Cross (21MA &lt; 50MA): 20 points (Bearish)</li>
+                                        <li>Weak Golden Cross (&lt;1% gap): 10 points (Neutral)</li>
+                                        <li>Strong Golden Cross: 0 points (Bullish)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Sentiment Component (0-25 points):</strong>
+                                    <ul>
+                                        <li>Extreme Fear (≤25): 20 points (Oversold conditions)</li>
+                                        <li>Fear (≤45): 12 points (Cautious sentiment)</li>
+                                        <li>Extreme Greed (≥75): 15 points (Overbought conditions)</li>
+                                        <li>Neutral: 5 points (Balanced sentiment)</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            
+                            <p><strong>Interpretation:</strong></p>
+                            <ul>
+                                <li><span class="risk-label low">0-25: LOW RISK</span> - Favorable conditions for deploying capital</li>
+                                <li><span class="risk-label moderate">26-50: MODERATE RISK</span> - Proceed with caution, consider scaling positions</li>
+                                <li><span class="risk-label high">51-75: HIGH RISK</span> - Reduce exposure, focus on preservation</li>
+                                <li><span class="risk-label critical">76-100: CRITICAL RISK</span> - Defensive positioning recommended</li>
+                            </ul>
                         </div>
                     </div>
                     
-                    <div class="glossary-footer">
-                        <p><strong>Disclaimer:</strong> This dashboard provides educational and informational content only. All metrics, analyses, and AI-generated insights are for research purposes and should not be considered financial advice. Past performance does not guarantee future results. Always conduct your own due diligence and consult with qualified financial professionals before making investment decisions. Market conditions can change rapidly, and no indicator or system is foolproof.</p>
-                        
-                        <p><strong>Technical Stack:</strong> HTML5, CSS3, JavaScript (ESM), Google Sheets, Google Apps Script, Google Gemini API</p>
-                        
-                        <p><strong>Version:</strong> 3.1 Single-File Edition | <strong>Last Updated:</strong> November 2024</p>
+                    <!-- Moving Averages -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">📈</span>
+                            <h3>Moving Averages (MA)</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>What they are:</strong> Statistical calculations that smooth price data by creating a constantly updated average price over specific time periods.</p>
+                            
+                            <p><strong>21-Day Moving Average (21MA):</strong></p>
+                            <ul>
+                                <li>Short-term trend indicator</li>
+                                <li>More responsive to recent price changes</li>
+                                <li>Used for tactical entry/exit points</li>
+                                <li>Formula: Sum of last 21 closing prices ÷ 21</li>
+                            </ul>
+                            
+                            <p><strong>50-Day Moving Average (50MA):</strong></p>
+                            <ul>
+                                <li>Intermediate-term trend indicator</li>
+                                <li>Less sensitive to daily volatility</li>
+                                <li>Key support/resistance level</li>
+                                <li>Formula: Sum of last 50 closing prices ÷ 50</li>
+                            </ul>
+                            
+                            <p><strong>Price vs MA Distance:</strong></p>
+                            <ul>
+                                <li>Calculated as: (Current Price - MA) / MA × 100</li>
+                                <li>Positive % = Price above MA (bullish)</li>
+                                <li>Negative % = Price below MA (bearish)</li>
+                                <li>Extreme values (&gt;5% or &lt;-5%) suggest overextension</li>
+                            </ul>
+                        </div>
                     </div>
+                    
+                    <!-- Golden/Death Cross -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">⚡</span>
+                            <h3>Golden Cross / Death Cross</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>What it is:</strong> A powerful momentum indicator based on the relationship between short-term (21-day) and intermediate-term (50-day) moving averages.</p>
+                            
+                            <p><strong>Golden Cross (Bullish):</strong></p>
+                            <ul>
+                                <li>Occurs when 21MA crosses above 50MA</li>
+                                <li>Signals shift to upward momentum</li>
+                                <li>Historically precedes sustained rallies</li>
+                                <li>Confirmation: 21MA should be &gt;1% above 50MA</li>
+                            </ul>
+                            
+                            <p><strong>Death Cross (Bearish):</strong></p>
+                            <ul>
+                                <li>Occurs when 21MA crosses below 50MA</li>
+                                <li>Signals shift to downward momentum</li>
+                                <li>Warning of potential trend reversal</li>
+                                <li>Historically precedes market corrections</li>
+                            </ul>
+                            
+                            <p><strong>Dashboard Metric (21MA vs 50MA %):</strong></p>
+                            <ul>
+                                <li>Positive value: Golden Cross territory</li>
+                                <li>Negative value: Death Cross territory</li>
+                                <li>Magnitude shows strength of trend</li>
+                                <li>Formula: (21MA - 50MA) / 50MA × 100</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- VIX -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">💥</span>
+                            <h3>VIX (Volatility Index)</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>What it is:</strong> The CBOE Volatility Index, often called the "Fear Index," measures the market's expectation of 30-day forward volatility based on S&P 500 options pricing.</p>
+                            
+                            <p><strong>Interpretation Levels:</strong></p>
+                            <ul>
+                                <li><strong>&lt;15:</strong> <span class="vix-level low">Low volatility</span> - Complacency, potential for surprise moves</li>
+                                <li><strong>15-20:</strong> <span class="vix-level normal">Normal range</span> - Typical market conditions</li>
+                                <li><strong>20-30:</strong> <span class="vix-level elevated">Elevated</span> - Increased uncertainty, cautious positioning</li>
+                                <li><strong>30-40:</strong> <span class="vix-level high">High</span> - Significant fear, potential opportunities</li>
+                                <li><strong>&gt;40:</strong> <span class="vix-level extreme">Extreme panic</span> - Historical buying opportunities</li>
+                            </ul>
+                            
+                            <p><strong>VIX 10-Day Moving Average:</strong></p>
+                            <ul>
+                                <li>Smooths daily VIX fluctuations</li>
+                                <li>Better gauge of sustained volatility trends</li>
+                                <li>Used in risk score calculation</li>
+                            </ul>
+                            
+                            <p><strong>VIX vs 10-Day Average:</strong></p>
+                            <ul>
+                                <li>Shows if current fear is increasing or decreasing</li>
+                                <li>Positive % = Fear rising (volatility spike)</li>
+                                <li>Negative % = Fear subsiding (calm returning)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Fear & Greed -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">🎭</span>
+                            <h3>CNN Fear & Greed Index</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>What it is:</strong> A composite sentiment indicator that measures investor emotion and behavior across seven different market factors.</p>
+                            
+                            <p><strong>Seven Components:</strong></p>
+                            <ul>
+                                <li><strong>Market Momentum:</strong> S&P 500 vs 125-day MA</li>
+                                <li><strong>Stock Price Strength:</strong> Stocks at 52-week highs vs lows</li>
+                                <li><strong>Stock Price Breadth:</strong> NYSE advancing vs declining volume</li>
+                                <li><strong>Put/Call Options:</strong> Put volume vs call volume ratio</li>
+                                <li><strong>Market Volatility:</strong> VIX levels</li>
+                                <li><strong>Safe Haven Demand:</strong> Stocks vs Treasury bonds</li>
+                                <li><strong>Junk Bond Demand:</strong> Spread between junk bonds and Treasuries</li>
+                            </ul>
+                            
+                            <p><strong>Scale (0-100):</strong></p>
+                            <ul>
+                                <li><strong>0-25:</strong> <span class="fg-level extreme-fear">Extreme Fear</span> - Potential buying opportunity</li>
+                                <li><strong>26-45:</strong> <span class="fg-level fear">Fear</span> - Cautious sentiment, oversold conditions possible</li>
+                                <li><strong>46-55:</strong> <span class="fg-level neutral">Neutral</span> - Balanced market sentiment</li>
+                                <li><strong>56-75:</strong> <span class="fg-level greed">Greed</span> - Optimistic sentiment, overbought conditions possible</li>
+                                <li><strong>76-100:</strong> <span class="fg-level extreme-greed">Extreme Greed</span> - Potential warning sign, consider profit-taking</li>
+                            </ul>
+                            
+                            <p><strong>Contrarian Indicator:</strong></p>
+                            <ul>
+                                <li>Extreme Fear often precedes market bottoms</li>
+                                <li>Extreme Greed often precedes market tops</li>
+                                <li>Works best at extremes (&lt;20 or &gt;80)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Historical Trends -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">📊</span>
+                            <h3>5-Day Historical Trends</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>What it is:</strong> Automated tracking of key metrics over the last 5 trading days to visualize momentum and trend direction.</p>
+                            
+                            <p><strong>Data Collection (AppScript):</strong></p>
+                            <ul>
+                                <li>Runs automatically daily at 4:30 PM ET (after market close)</li>
+                                <li>Captures: QQQ price, VIX, 21MA vs 50MA spread, Fear & Greed</li>
+                                <li>Stores in "Historical_Data" sheet</li>
+                                <li>Maintains rolling 5-day window</li>
+                                <li>Data shifts daily: Day 5→Day 4, Day 4→Day 3, etc.</li>
+                            </ul>
+                            
+                            <p><strong>Visual Charts:</strong></p>
+                            <ul>
+                                <li><strong>Green gradient:</strong> Uptrend (latest value &gt; oldest value)</li>
+                                <li><strong>Red gradient:</strong> Downtrend (latest value &lt; oldest value)</li>
+                                <li>Shows Min/Current/Max labels for context</li>
+                                <li>Helps identify momentum shifts before they become obvious</li>
+                            </ul>
+                            
+                            <p><strong>Why 5 Days?</strong></p>
+                            <ul>
+                                <li>Captures full trading week</li>
+                                <li>Removes weekend noise</li>
+                                <li>Shows short-term momentum without excessive lag</li>
+                                <li>Complements longer-term moving averages</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Multi-Asset Dashboard -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">🌐</span>
+                            <h3>Multi-Asset Comparison</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>What it is:</strong> Simultaneous tracking of multiple asset classes to identify sector rotation, risk-on/risk-off behavior, and relative performance.</p>
+                            
+                            <p><strong>Assets Tracked:</strong></p>
+                            <ul>
+                                <li><strong>QQQ (Invesco QQQ Trust):</strong>
+                                    <ul>
+                                        <li>Tracks Nasdaq-100 Index</li>
+                                        <li>Technology and growth focus</li>
+                                        <li>Higher volatility, higher return potential</li>
+                                        <li>Primary focus of this dashboard</li>
+                                    </ul>
+                                </li>
+                                <li><strong>SPY (SPDR S&P 500 ETF):</strong>
+                                    <ul>
+                                        <li>Tracks S&P 500 Index</li>
+                                        <li>Broad market benchmark</li>
+                                        <li>More diversified than QQQ</li>
+                                        <li>Compare to see if tech outperforming/underperforming</li>
+                                    </ul>
+                                </li>
+                                <li><strong>TLT (iShares 20+ Year Treasury Bond ETF):</strong>
+                                    <ul>
+                                        <li>Long-duration US Treasury bonds</li>
+                                        <li>Safe-haven asset</li>
+                                        <li>Inverse correlation to stocks in risk-off environments</li>
+                                        <li>Rising TLT + falling stocks = flight to safety</li>
+                                    </ul>
+                                </li>
+                                <li><strong>GLD (SPDR Gold Shares):</strong>
+                                    <ul>
+                                        <li>Physical gold holdings</li>
+                                        <li>Inflation hedge</li>
+                                        <li>Alternative safe-haven to bonds</li>
+                                        <li>Rising GLD can signal inflation concerns or uncertainty</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            
+                            <p><strong>Rotation Signals:</strong></p>
+                            <ul>
+                                <li><strong>Risk-On:</strong> QQQ↑, SPY↑, TLT↓, GLD↓ (investors seeking returns)</li>
+                                <li><strong>Risk-Off:</strong> QQQ↓, SPY↓, TLT↑, GLD↑ (investors seeking safety)</li>
+                                <li><strong>Tech Rotation:</strong> QQQ outperforming SPY significantly</li>
+                                <li><strong>Value Rotation:</strong> SPY outperforming QQQ significantly</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Analysis -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">🤖</span>
+                            <h3>AI-Powered Analysis (Claude)</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>What it is:</strong> Real-time market analysis powered by Anthropic's Claude AI, combining all dashboard metrics into actionable insights.</p>
+                            
+                            <p><strong>Analysis Process:</strong></p>
+                            <ul>
+                                <li><strong>Data Input:</strong> All current metrics (price, MAs, VIX, sentiment, risk score, cross status)</li>
+                                <li><strong>Context Integration:</strong> Historical trends, market conditions, volatility environment</li>
+                                <li><strong>Pattern Recognition:</strong> Identifies setups similar to past market conditions</li>
+                                <li><strong>Risk Assessment:</strong> Evaluates current risk/reward profile</li>
+                                <li><strong>Strategic Output:</strong> Provides market positioning guidance</li>
+                            </ul>
+                            
+                            <p><strong>Analysis Structure:</strong></p>
+                            <ul>
+                                <li><strong>Market Positioning:</strong> High-level stance and opportunity assessment</li>
+                                <li><strong>Current Conditions:</strong> Price action relative to key technical levels</li>
+                                <li><strong>Risk Assessment:</strong> Volatility and sentiment evaluation</li>
+                                <li><strong>Strategic Opportunities:</strong> Specific levels and setups to watch</li>
+                                <li><strong>Action Items:</strong> Tactical positioning recommendations with time horizons</li>
+                            </ul>
+                            
+                            <p><strong>Update Frequency:</strong></p>
+                            <ul>
+                                <li>Refreshes hourly with market data</li>
+                                <li>Adapts to changing market conditions in real-time</li>
+                                <li>Provides consistent framework for decision-making</li>
+                            </ul>
+                            
+                            <p><strong>Use Cases:</strong></p>
+                            <ul>
+                                <li>Quick morning market assessment (30 seconds)</li>
+                                <li>Entry/exit point identification</li>
+                                <li>Position sizing guidance</li>
+                                <li>Risk management decisions</li>
+                                <li>Time horizon planning (3-6 months typical)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Sources -->
+                    <div class="glossary-card">
+                        <div class="glossary-card-header">
+                            <span class="glossary-emoji">🔗</span>
+                            <h3>Data Sources & Updates</h3>
+                        </div>
+                        <div class="glossary-content">
+                            <p><strong>Data Providers:</strong></p>
+                            <ul>
+                                <li><strong>Google Finance:</strong> Real-time stock prices, moving averages (via Google Sheets formulas)</li>
+                                <li><strong>CBOE:</strong> VIX data (Chicago Board Options Exchange)</li>
+                                <li><strong>CNN Business:</strong> Fear & Greed Index composite data</li>
+                                <li><strong>Historical Data:</strong> Google Apps Script automated collection</li>
+                            </ul>
+                            
+                            <p><strong>Update Schedule:</strong></p>
+                            <ul>
+                                <li><strong>Live Data:</strong> Refreshes every hour during market hours</li>
+                                <li><strong>Historical Data:</strong> Updates daily at 4:30 PM ET</li>
+                                <li><strong>AI Analysis:</strong> Regenerates with each data refresh</li>
+                                <li><strong>Multi-Asset Data:</strong> Updates hourly</li>
+                            </ul>
+                            
+                            <p><strong>Data Pipeline:</strong></p>
+                            <ul>
+                                <li>Google Sheets → Published CSV → Dashboard frontend</li>
+                                <li>Apps Script → Historical_Data sheet → Published CSV → Visual charts</li>
+                                <li>Dashboard → Netlify Function → Claude API → AI Analysis</li>
+                            </ul>
+                            
+                            <p><strong>Reliability:</strong></p>
+                            <ul>
+                                <li>Multiple redundant data sources</li>
+                                <li>Automatic error handling and fallbacks</li>
+                                <li>Mock data generation if sources unavailable</li>
+                                <li>Console logging for troubleshooting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glossary-footer">
+                    <p><strong>Disclaimer:</strong> This dashboard provides educational and informational content only. All metrics, analyses, and AI-generated insights are for research purposes and should not be considered financial advice. Past performance does not guarantee future results. Always conduct your own due diligence and consult with qualified financial professionals before making investment decisions. Market conditions can change rapidly, and no indicator or system is foolproof.</p>
+                    
+                    <p><strong>Technical Stack:</strong> HTML5, CSS3, JavaScript (ES6+), Google Sheets, Google Apps Script, Anthropic Claude AI API, Netlify Functions, GitHub Pages/Netlify Hosting</p>
+                    
+                    <p><strong>Version:</strong> 2.0 Enhanced | <strong>Last Updated:</strong> November 2024</p>
                 </div>
             </div>
         </div>
     </div>
-    <script type="module">
-        import { GoogleGenAI, Type } from "@google/genai";
 
+    <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=2141065289&single=true&output=csv';
         const HISTORICAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=192889417&single=true&output=csv';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboardPage = document.getElementById('page-dashboard');
+            const glossaryPage = document.getElementById('page-glossary');
+            const navLinks = document.querySelectorAll('.nav-link');
 
-        // --- Helper Functions ---
-        function getTrendArrow(v) { return v > 0 ? ' ↑' : v < 0 ? ' ↓' : ''; }
+            function handleRouteChange() {
+                const hash = window.location.hash || '#/';
+                
+                if (hash === '#/glossary') {
+                    dashboardPage.style.display = 'none';
+                    glossaryPage.style.display = 'block';
+                    document.querySelector('.nav-link[href="#/"]').classList.remove('active');
+                    document.querySelector('.nav-link[href="#/glossary"]').classList.add('active');
+                } else {
+                    dashboardPage.style.display = 'block';
+                    glossaryPage.style.display = 'none';
+                    document.querySelector('.nav-link[href="#/"]').classList.add('active');
+                    document.querySelector('.nav-link[href="#/glossary"]').classList.remove('active');
+                }
+            }
+
+            window.addEventListener('hashchange', handleRouteChange);
+            
+            // Initial route handling
+            handleRouteChange();
+
+            // Only load data if on the dashboard page initially
+            if (!window.location.hash || window.location.hash === '#/') {
+                loadData();
+                setInterval(loadData, 3600000); // Refresh every hour
+            }
+        });
+
+
+        // Historical data storage
+        let historicalData = {
+            vix: [],
+            qqq: [],
+            ma21vs50: [],
+            fearGreed: []
+        };
+
+        function getTrendArrow(v) {
+            return v > 0 ? ' ↑' : v < 0 ? ' ↓' : '';
+        }
+
         function getColorClass(v, t) {
             if (t === 'vix') return v < 20 ? 'neutral' : v < 30 ? 'fear' : 'extreme-fear';
             return v > 0 ? 'bullish' : 'bearish';
         }
-        function getFearGreedStatus(v) {
-            if (v <= 25) return { text: 'EXTREME FEAR', class: 'badge-critical-risk' };
-            if (v <= 45) return { text: 'FEAR', class: 'badge-high-risk' };
-            if (v <= 55) return { text: 'NEUTRAL', class: 'badge-mid-risk' };
-            if (v <= 75) return { text: 'GREED', class: 'badge-low-risk' };
-            return { text: 'EXTREME GREED', class: 'badge-low-risk' };
-        }
 
-        // --- Data Calculation ---
+        function getFearGreedStatus(v) {
+            if (v <= 25) return { text: 'EXTREME FEAR', class: 'badge-extreme-fear' };
+            if (v <= 45) return { text: 'FEAR', class: 'badge-fear' };
+            if (v <= 55) return { text: 'NEUTRAL', class: 'badge-neutral' };
+            if (v <= 75) return { text: 'GREED', class: 'badge-greed' };
+            return { text: 'EXTREME GREED', class: 'badge-greed' };
+        }
+        
         function calculateRiskScore(data) {
             let score = 0;
-            const factors = {
-                vix: { score: 0, label: '' },
-                position: { score: 0, label: '' },
-                momentum: { score: 0, label: '' },
-                sentiment: { score: 0, label: '' },
-            };
-
-            const vix10 = data.vix10ma;
+            const factors = {};
+            
+            // VIX Factor (0-30 points)
+            const vix10 = parseFloat(data.vix10ma);
             if (vix10 >= 30) { score += 30; factors.vix = { score: 30, label: 'Critical' }; }
             else if (vix10 >= 25) { score += 22; factors.vix = { score: 22, label: 'High' }; }
             else if (vix10 >= 20) { score += 15; factors.vix = { score: 15, label: 'Elevated' }; }
             else { score += 5; factors.vix = { score: 5, label: 'Low' }; }
-
-            const { qqq21ma, qqq50ma } = data;
+            
+            // Price vs MA Factor (0-25 points)
+            const qqq21ma = parseFloat(data.qqq21ma);
+            const qqq50ma = parseFloat(data.qqq50ma);
             if (qqq21ma < 0 && qqq50ma < 0) { score += 25; factors.position = { score: 25, label: 'Below All MAs' }; }
             else if (qqq21ma < 0) { score += 15; factors.position = { score: 15, label: 'Below 21MA' }; }
             else if (qqq50ma < 0) { score += 10; factors.position = { score: 10, label: 'Below 50MA' }; }
-            else { factors.position = { score: 0, label: 'Above MAs' }; }
-
-            const { ma21vs50 } = data;
+            else { score += 0; factors.position = { score: 0, label: 'Above MAs' }; }
+            
+            // Cross Status Factor (0-20 points)
+            const ma21vs50 = parseFloat(data.ma21vs50);
             if (ma21vs50 < 0) { score += 20; factors.momentum = { score: 20, label: 'Death Cross' }; }
             else if (ma21vs50 < 1) { score += 10; factors.momentum = { score: 10, label: 'Weak Golden' }; }
-            else { factors.momentum = { score: 0, label: 'Golden Cross' }; }
-
-            const fg = data.fearGreed;
+            else { score += 0; factors.momentum = { score: 0, label: 'Golden Cross' }; }
+            
+            // Fear & Greed Factor (0-25 points)
+            const fg = parseFloat(data.fearGreed);
             if (fg <= 25) { score += 20; factors.sentiment = { score: 20, label: 'Extreme Fear' }; }
             else if (fg <= 45) { score += 12; factors.sentiment = { score: 12, label: 'Fear' }; }
             else if (fg >= 75) { score += 15; factors.sentiment = { score: 15, label: 'Extreme Greed' }; }
             else { score += 5; factors.sentiment = { score: 5, label: 'Neutral' }; }
-
+            
             return { score, factors, max: 100 };
         }
-
-        // --- Data Fetching ---
-        async function loadHistoricalData() {
-            const historicalData = { vix: [], qqq: [], ma21vs50: [], fearGreed: [] };
-            if (!HISTORICAL_CSV_URL) return historicalData;
-
-            try {
-                const res = await fetch(HISTORICAL_CSV_URL);
-                if (!res.ok) throw new Error('Failed to fetch historical CSV');
-                const csv = await res.text();
-                const rows = csv.split('\n').map(r => r.split(',').map(c => c.trim().replace(/"/g, '')));
-                
-                if (rows.length >= 5) {
-                    historicalData.qqq = rows[1]?.slice(1, 6).map(v => parseFloat(v)).filter(v => !isNaN(v)) || [];
-                    historicalData.vix = rows[2]?.slice(1, 6).map(v => parseFloat(v)).filter(v => !isNaN(v)) || [];
-                    historicalData.ma21vs50 = rows[3]?.slice(1, 6).map(v => parseFloat(v)).filter(v => !isNaN(v)) || [];
-                    historicalData.fearGreed = rows[4]?.slice(1, 6).map(v => parseFloat(v)).filter(v => !isNaN(v)) || [];
-                }
-                return historicalData;
-            } catch (e) {
-                console.error('Error loading historical data:', e);
-                return historicalData;
-            }
+        
+        function updateRiskMeter(data) {
+            const risk = calculateRiskScore(data);
+            const percentage = (risk.score / risk.max) * 100;
+            
+            const fill = document.getElementById('riskMeterFill');
+            const label = document.getElementById('riskMeterLabel');
+            
+            // Set color based on risk level
+            let color;
+            let riskLabel;
+            if (percentage <= 25) { color = '#26de81'; riskLabel = 'LOW RISK'; }
+            else if (percentage <= 50) { color = '#ffa502'; riskLabel = 'MODERATE RISK'; }
+            else if (percentage <= 75) { color = '#ff6b6b'; riskLabel = 'HIGH RISK'; }
+            else { color = '#8B0000'; riskLabel = 'CRITICAL RISK'; }
+            
+            fill.style.width = percentage + '%';
+            fill.style.background = `linear-gradient(90deg, ${color} 0%, ${color}dd 100%)`;
+            label.textContent = `${Math.round(risk.score)}/${risk.max} - ${riskLabel}`;
+            
+            // Update breakdown
+            const breakdown = document.getElementById('riskBreakdown');
+            breakdown.innerHTML = `
+                <div class="risk-factor">
+                    <span class="risk-factor-label">📊 VIX Level</span>
+                    <span class="risk-factor-value">${risk.factors.vix.score}/30 - ${risk.factors.vix.label}</span>
+                </div>
+                <div class="risk-factor">
+                    <span class="risk-factor-label">📈 Price Position</span>
+                    <span class="risk-factor-value">${risk.factors.position.score}/25 - ${risk.factors.position.label}</span>
+                </div>
+                <div class="risk-factor">
+                    <span class="risk-factor-label">🔄 Momentum</span>
+                    <span class="risk-factor-value">${risk.factors.momentum.score}/20 - ${risk.factors.momentum.label}</span>
+                </div>
+                <div class="risk-factor">
+                    <span class="risk-factor-label">😨 Sentiment</span>
+                    <span class="risk-factor-value">${risk.factors.sentiment.score}/25 - ${risk.factors.sentiment.label}</span>
+                </div>
+            `;
         }
-
+        
+        function createTrendMini(label, values, currentValue) {
+            if (!values || values.length === 0) {
+                // Mock historical data for demonstration
+                values = [currentValue * 0.97, currentValue * 0.99, currentValue * 1.01, currentValue * 0.98, currentValue];
+            }
+            
+            const trend = values[values.length - 1] > values[0] ? '↗' : '↘';
+            const trendClass = values[values.length - 1] > values[0] ? 'bullish' : 'bearish';
+            
+            return `
+                <span class="trend-label">${label}:</span>
+                <div class="trend-values">
+                    ${values.map((v, i) => `
+                        <span class="trend-value ${i === values.length - 1 ? trendClass : ''}">${typeof v === 'number' ? v.toFixed(2) : v}</span>
+                        ${i < values.length - 1 ? '<span class="trend-dot"></span>' : ''}
+                    `).join('')}
+                    <span class="trend-arrow-mini ${trendClass}">${trend}</span>
+                </div>
+            `;
+        }
+        
+        function drawMiniChart(canvasId, values, label) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas || !values || values.length === 0) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth * 2; // 2x for retina
+            const height = canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+            
+            const w = canvas.offsetWidth;
+            const h = canvas.offsetHeight;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, w, h);
+            
+            // Calculate data range
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            const range = max - min || 1; // Avoid division by zero
+            const padding = 10;
+            
+            // Determine trend color
+            const isUptrend = values[values.length - 1] >= values[0];
+            const lineColor = isUptrend ? '#26de81' : '#ff6b6b';
+            const gradientColor = isUptrend ? 'rgba(38, 222, 129, 0.2)' : 'rgba(255, 107, 107, 0.2)';
+            
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, h);
+            gradient.addColorStop(0, gradientColor);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            
+            // Draw area
+            ctx.beginPath();
+            values.forEach((value, i) => {
+                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
+                const y = h - padding - ((value - min) / range) * (h - padding * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(w - padding, h - padding);
+            ctx.lineTo(padding, h - padding);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw line
+            ctx.beginPath();
+            values.forEach((value, i) => {
+                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
+                const y = h - padding - ((value - min) / range) * (h - padding * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw points
+            values.forEach((value, i) => {
+                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
+                const y = h - padding - ((value - min) / range) * (h - padding * 2);
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = lineColor;
+                ctx.fill();
+                ctx.strokeStyle = '#1a1a2e';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            
+            // Update legend
+            const minEl = document.getElementById(canvasId.replace('Chart', 'ChartMin'));
+            const maxEl = document.getElementById(canvasId.replace('Chart', 'ChartMax'));
+            const currentEl = document.getElementById(canvasId.replace('Chart', 'ChartCurrent'));
+            
+            if (minEl) minEl.textContent = `Min: ${min.toFixed(2)}`;
+            if (maxEl) maxEl.textContent = `Max: ${max.toFixed(2)}`;
+            if (currentEl) currentEl.textContent = `Current: ${values[values.length - 1].toFixed(2)}`;
+        }
+        
+        function updateVisualCharts(data) {
+            console.log('🎨 Updating visual charts...');
+            console.log('Historical data available:', {
+                qqq: historicalData.qqq.length,
+                vix: historicalData.vix.length,
+                ma21vs50: historicalData.ma21vs50.length,
+                fearGreed: historicalData.fearGreed.length
+            });
+            
+            // Generate or use historical data
+            const qqqHistory = historicalData.qqq.length > 0 ? historicalData.qqq : 
+                [parseFloat(data.qqqPrice) * 0.97, parseFloat(data.qqqPrice) * 0.99, 
+                 parseFloat(data.qqqPrice) * 1.01, parseFloat(data.qqqPrice) * 0.98, 
+                 parseFloat(data.qqqPrice)];
+            
+            const maHistory = historicalData.ma21vs50.length > 0 ? historicalData.ma21vs50 :
+                [parseFloat(data.ma21vs50) * 0.95, parseFloat(data.ma21vs50) * 0.97,
+                 parseFloat(data.ma21vs50) * 1.02, parseFloat(data.ma21vs50) * 1.05,
+                 parseFloat(data.ma21vs50)];
+            
+            const fgHistory = historicalData.fearGreed.length > 0 ? historicalData.fearGreed :
+                [parseFloat(data.fearGreed) + 5, parseFloat(data.fearGreed) + 2,
+                 parseFloat(data.fearGreed) - 3, parseFloat(data.fearGreed) - 1,
+                 parseFloat(data.fearGreed)];
+            
+            console.log('📊 Chart data:', { qqqHistory, maHistory, fgHistory });
+            
+            // Draw charts
+            console.log('🎨 Drawing QQQ chart...');
+            drawMiniChart('qqqChart', qqqHistory, 'QQQ Price');
+            
+            console.log('🎨 Drawing MA chart...');
+            drawMiniChart('maChart', maHistory, '21MA vs 50MA');
+            
+            console.log('🎨 Drawing F&G chart...');
+            drawMiniChart('fgChart', fgHistory, 'Fear & Greed');
+            
+            console.log('✅ All charts updated!');
+        }
+        
         async function fetchMultiAssetData() {
+            // For now, we'll use mock data
+            // In production, you'd fetch from your Google Sheets or a financial API
             return {
                 SPY: { price: 580.45, change: 0.45, change_pct: 0.08, ma21: 575.20, ma50: 568.30 },
                 TLT: { price: 92.15, change: -0.32, change_pct: -0.35, ma21: 92.80, ma50: 93.50 },
                 GLD: { price: 245.67, change: 1.23, change_pct: 0.50, ma21: 244.10, ma50: 242.80 }
             };
         }
+        
+        function renderMultiAssetGrid(assets, qqqData) {
+            const grid = document.getElementById('multiAssetGrid');
+            
+            // Add QQQ first
+            const qqqChange = parseFloat(qqqData.qqq21ma);
+            const qqqHtml = `
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div>
+                            <div class="asset-name">QQQ</div>
+                            <div style="font-size: 0.85em; color: #888;">Nasdaq 100 ETF</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="asset-price">$${qqqData.qqqPrice}</div>
+                        </div>
+                    </div>
+                    <div class="asset-change ${qqqChange >= 0 ? 'bullish' : 'bearish'}">
+                        ${qqqChange >= 0 ? '▲' : '▼'} ${Math.abs(qqqChange).toFixed(2)}%
+                    </div>
+                    <div style="font-size: 0.85em; color: #888; margin-top: 10px;">
+                        <div>21MA: $${qqqData.qqq21}</div>
+                        <div>50MA: $${qqqData.qqq50}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Add other assets
+            const assetsHtml = Object.entries(assets).map(([symbol, data]) => {
+                const changeClass = data.change >= 0 ? 'bullish' : 'bearish';
+                const arrow = data.change >= 0 ? '▲' : '▼';
+                let description = '';
+                if (symbol === 'SPY') description = 'S&P 500 ETF';
+                else if (symbol === 'TLT') description = '20+ Year Treasury';
+                else if (symbol === 'GLD') description = 'Gold ETF';
+                
+                return `
+                    <div class="asset-card">
+                        <div class="asset-header">
+                            <div>
+                                <div class="asset-name">${symbol}</div>
+                                <div style="font-size: 0.85em; color: #888;">${description}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="asset-price">$${data.price.toFixed(2)}</div>
+                            </div>
+                        </div>
+                        <div class="asset-change ${changeClass}">
+                            ${arrow} ${Math.abs(data.change_pct).toFixed(2)}% ($${Math.abs(data.change).toFixed(2)})
+                        </div>
+                        <div style="font-size: 0.85em; color: #888; margin-top: 10px;">
+                            <div>21MA: $${data.ma21.toFixed(2)}</div>
+                            <div>50MA: $${data.ma50.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = qqqHtml + assetsHtml;
+        }
 
-        function formatDetailedSections(markdownText) {
-            const sections = {};
+        function formatAIAnalysis(rawAnalysis) {
+            let execSummary = '';
+            let detailedAnalysis = '';
+            
+            if (rawAnalysis.includes('**MARKET POSITIONING**') || rawAnalysis.includes('MARKET POSITIONING:')) {
+                const lines = rawAnalysis.split('\n').filter(line => line.trim());
+                const firstLine = lines[0] || '';
+                
+                const titleMatch = firstLine.match(/\*\*MARKET POSITIONING:\s*(.+?)\*\*/i) || 
+                                   firstLine.match(/MARKET POSITIONING:\s*(.+)/i);
+                
+                if (titleMatch) {
+                    execSummary = titleMatch[1].trim();
+                }
+                
+                if (!execSummary || execSummary.includes('**')) {
+                    const conditionsMatch = rawAnalysis.match(/\*\*Current Market Conditions\*\*\s*\n(.+?)(?=\n\*\*|$)/is);
+                    if (conditionsMatch) {
+                        execSummary = conditionsMatch[1].trim().split('\n')[0].replace(/\*\*/g, '').substring(0, 200) + '...';
+                    }
+                }
+                
+                detailedAnalysis = formatDetailedSections(rawAnalysis);
+            } else {
+                const sentences = rawAnalysis.split(/[.!?]+/);
+                execSummary = sentences[0] + '.';
+                detailedAnalysis = '<div class="section-content">' + 
+                    rawAnalysis
+                        .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>')
+                        .replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>') +
+                    '</div>';
+            }
+            
+            return { execSummary, detailedAnalysis };
+        }
+        
+        function formatDetailedSections(rawAnalysis) {
+            let formattedHTML = '';
+            const lines = rawAnalysis.split('\n');
             let currentSection = null;
             
-            const lines = markdownText.split('\n');
-            
-            for (const line of lines) {
-                const trimmedLine = line.trim();
-                const match = trimmedLine.match(/^\*\*(.*?):\*\*/);
-                if (match && match[1]) {
-                    currentSection = match[1];
-                    sections[currentSection] = [];
-                } else if (currentSection && trimmedLine.length > 0) {
-                    sections[currentSection].push(trimmedLine);
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                
+                if (line.includes('MARKET POSITIONING') || line.includes('Market Positioning')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">📊</span>Market Positioning</div><div class="section-content">';
+                    currentSection = 'positioning';
+                } else if (line.includes('Current Market Conditions')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">📈</span>Current Market Conditions</div><div class="section-content">';
+                    currentSection = 'conditions';
+                } else if (line.includes('Risk Indicator') || line.includes('Risk Assessment')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">⚠️</span>Risk Assessment</div><div class="section-content">';
+                    currentSection = 'risk';
+                } else if (line.includes('Strategic Opportunities') || line.includes('Opportunities')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">💡</span>Strategic Opportunities</div><div class="section-content">';
+                    currentSection = 'opportunities';
+                } else if (line.includes('Positioning Recommendations') || line.includes('Recommendations')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">🎯</span>Action Items</div><div class="section-content">';
+                    currentSection = 'recommendations';
+                } else if (currentSection && line.length > 0 && !line.startsWith('**MARKET')) {
+                    let cleanLine = line
+                        .replace(/\*\*/g, '')
+                        .replace(/^\-\s+/, '• ')
+                        .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>');
+                    
+                    cleanLine = cleanLine.replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>');
+                    
+                    formattedHTML += cleanLine + '<br>';
                 }
-            }
+            });
             
-            const sectionMap = {
-                'Current Market Conditions': { icon: '📈', title: 'Current Market Conditions' },
-                'Risk Assessment': { icon: '⚠️', title: 'Risk Assessment' },
-                'Strategic Opportunities': { icon: '💡', title: 'Strategic Opportunities' },
-                'Positioning Recommendations': { icon: '🎯', title: 'Action Items' },
-            };
-
-            let html = '';
-            for (const key in sections) {
-                const sectionConfig = sectionMap[key];
-                if (sectionConfig && sections[key].length > 0) {
-                    html += `<div class="analysis-section"><div class="section-title"><span class="section-icon">${sectionConfig.icon}</span>${sectionConfig.title}</div><div class="section-content">`;
-                    html += sections[key].map(line => {
-                        return line
-                            .replace(/^\* /, '• ')
-                            .replace(/\$(\d+(\.\d+)?)/g, '<span class="key-level">$$$1</span>')
-                            .replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>');
-                    }).join('<br>');
-                    html += '</div></div>';
-                }
-            }
-            return html;
+            if (currentSection) formattedHTML += '</div></div>';
+            
+            return formattedHTML;
         }
 
         async function getAIAnalysis(data) {
             try {
-                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-                const prompt = `
-                    You are a professional market analyst for a high-tech financial dashboard. Your focus is on QQQ (Nasdaq-100) and growth tech stocks.
-                    Analyze the following real-time market data and provide a concise, actionable analysis as a JSON object matching the provided schema.
-
-                    **Current Data:**
-                    - QQQ Price: ${data.qqqPrice.toFixed(2)}
-                    - Price vs 21MA: ${data.qqq21ma.toFixed(2)}%
-                    - Price vs 50MA: ${data.qqq50ma.toFixed(2)}%
-                    - 21MA vs 50MA Spread: ${data.ma21vs50.toFixed(2)}%
-                    - Golden/Death Cross Status: ${data.crossStatus}
-                    - VIX (Fear Index): ${data.vixEod.toFixed(2)}
-                    - CNN Fear & Greed Index: ${data.fearGreed}
-                    - Composite Risk Level: ${data.riskLevel}
-
-                    Generate the full JSON output based on this data.
-                `;
-                
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: prompt,
-                    config: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: Type.OBJECT,
-                            properties: {
-                                execSummary: { 
-                                    type: Type.STRING,
-                                    description: "A single, concise sentence summarizing the overall market stance. e.g., 'Cautiously bullish with a focus on key support levels.'"
-                                },
-                                riskCardInsight: {
-                                    type: Type.STRING,
-                                    description: "A one-sentence summary of the current market risk environment based on the Composite Risk Level and VIX."
-                                },
-                                momentumCardInsight: {
-                                    type: Type.STRING,
-                                    description: "A one-sentence summary of the market's momentum based on the cross status and 21MA vs 50MA spread."
-                                },
-                                detailedAnalysis: {
-                                    type: Type.STRING,
-                                    description: "A detailed market analysis in markdown format. Use the following headings exactly: '**Current Market Conditions:**', '**Risk Assessment:**', '**Strategic Opportunities:**', '**Positioning Recommendations:**'. Use markdown bullet points for lists."
-                                }
-                            },
-                            required: ["execSummary", "riskCardInsight", "momentumCardInsight", "detailedAnalysis"]
-                        }
-                    }
+                const response = await fetch('/.netlify/functions/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
                 });
-                
-                const result = JSON.parse(response.text);
-                result.detailedAnalysis = formatDetailedSections(result.detailedAnalysis);
-                return result;
 
+                if (!response.ok) {
+                    throw new Error('AI analysis failed');
+                }
+
+                const result = await response.json();
+                return result.analysis;
             } catch (error) {
                 console.error('AI Analysis Error:', error);
-                const fallbackAnalysis = `AI analysis temporarily unavailable. Market sentiment: ${data.riskLevel}. Trend: ${data.crossStatus}.`;
-                return {
-                    execSummary: fallbackAnalysis,
-                    detailedAnalysis: fallbackAnalysis,
-                    riskCardInsight: `Risk level is currently ${data.riskLevel}.`,
-                    momentumCardInsight: `Momentum is indicated by a ${data.crossStatus}.`
-                };
+                return 'AI analysis temporarily unavailable. Market sentiment: ' + data.riskLevel + '. Trend: ' + data.crossStatus + '.';
             }
         }
 
-        // --- Main Data Orchestrator ---
+        async function loadHistoricalData() {
+            if (!HISTORICAL_CSV_URL) {
+                console.log('⚠️ No historical CSV URL configured, using mock data');
+                return false;
+            }
+            
+            console.log('📊 Loading historical data from:', HISTORICAL_CSV_URL);
+            
+            try {
+                const res = await fetch(HISTORICAL_CSV_URL);
+                if (!res.ok) {
+                    console.error('❌ Failed to fetch historical CSV:', res.status);
+                    return false;
+                }
+                
+                const csv = await res.text();
+                console.log('📄 CSV loaded, length:', csv.length);
+                console.log('📄 First 500 chars:', csv.substring(0, 500));
+                
+                const rows = csv.split('\n').map(r => r.split(',').map(c => c.trim().replace(/"/g, '')));
+                console.log('📊 Parsed rows:', rows.length);
+                console.log('📊 Row structure:', rows.slice(0, 5));
+                
+                // Expected format:
+                // Row 1: Headers (Metric, Day 1, Day 2, Day 3, Day 4, Day 5, Last Updated)
+                // Row 2: QQQ, value1, value2, value3, value4, value5, timestamp
+                // Row 3: VIX, value1, value2, value3, value4, value5, timestamp
+                // Row 4: MA21vs50, value1, value2, value3, value4, value5, timestamp
+                // Row 5: FearGreed, value1, value2, value3, value4, value5, timestamp
+                
+                if (rows.length >= 5) {
+                    // Parse QQQ (row index 1, skip header)
+                    if (rows[1] && rows[1][0] && rows[1][0].includes('QQQ')) {
+                        historicalData.qqq = [rows[1][1], rows[1][2], rows[1][3], rows[1][4], rows[1][5]]
+                            .map(v => parseFloat(v)).filter(v => !isNaN(v));
+                        console.log('✅ QQQ historical data:', historicalData.qqq);
+                    }
+                    
+                    // Parse VIX (row index 2)
+                    if (rows[2] && rows[2][0] && rows[2][0].includes('VIX')) {
+                        historicalData.vix = [rows[2][1], rows[2][2], rows[2][3], rows[2][4], rows[2][5]]
+                            .map(v => parseFloat(v)).filter(v => !isNaN(v));
+                        console.log('✅ VIX historical data:', historicalData.vix);
+                    }
+                    
+                    // Parse MA21vs50 (row index 3)
+                    if (rows[3] && rows[3][0] && rows[3][0].includes('MA21')) {
+                        historicalData.ma21vs50 = [rows[3][1], rows[3][2], rows[3][3], rows[3][4], rows[3][5]]
+                            .map(v => parseFloat(v)).filter(v => !isNaN(v));
+                        console.log('✅ MA21vs50 historical data:', historicalData.ma21vs50);
+                    }
+                    
+                    // Parse FearGreed (row index 4)
+                    if (rows[4] && rows[4][0] && rows[4][0].includes('Fear')) {
+                        historicalData.fearGreed = [rows[4][1], rows[4][2], rows[4][3], rows[4][4], rows[4][5]]
+                            .map(v => parseFloat(v)).filter(v => !isNaN(v));
+                        console.log('✅ FearGreed historical data:', historicalData.fearGreed);
+                    }
+                    
+                    console.log('✅ Historical data loaded successfully!');
+                    return true;
+                }
+                
+                console.warn('⚠️ Not enough rows in CSV');
+                return false;
+            } catch (e) {
+                console.error('❌ Error loading historical data:', e);
+                return false;
+            }
+        }
+
         async function loadData() {
             try {
+                // Load historical data first
+                await loadHistoricalData();
+                
                 const res = await fetch(CSV_URL);
                 if (!res.ok) throw new Error('Fetch failed');
                 
                 const csv = await res.text();
                 const rows = csv.split('\n').map(r => r.split(',').map(c => c.trim().replace(/"/g, ''))).filter(r => r.some(c => c));
+                
                 if (rows.length < 4) throw new Error('Not enough data');
-
+                
                 const d = rows[3];
-                const marketData = {
-                    qqqPrice: parseFloat(d[0]) || 0,
-                    qqq21: parseFloat(d[1]) || 0,
-                    qqq50: parseFloat(d[2]) || 0,
-                    ma21vs50: parseFloat(d[3]) || 0,
-                    vixEod: parseFloat(d[4]) || 0,
-                    vixVs10d: parseFloat(d[5]) || 0,
-                    qqq21ma: parseFloat(d[6]) || 0,
-                    fearGreed: parseInt(d[7]) || 0,
-                    vix10ma: parseFloat(d[9]) || 0,
+                const data = {
+                    qqqPrice: d[0] || '--',
+                    qqq21: d[1] || '--',
+                    qqq50: d[2] || '--',
+                    ma21vs50: d[3] || '--',
+                    vixEod: d[4] || '--',
+                    vixVs10d: d[5] || '--',
+                    qqq21ma: d[6] || '--',
+                    fearGreed: d[7] || '--',
+                    vix10ma: d[9] || '--',
                     riskLevel: d[10] || '--',
                     crossStatus: d[11] || '--',
-                    qqq50ma: parseFloat(d[12]) || 0
+                    qqq50ma: d[12] || '--'
                 };
-
-                const [historicalData, multiAssetData, aiAnalysis] = await Promise.all([
-                    loadHistoricalData(),
-                    fetchMultiAssetData(),
-                    getAIAnalysis(marketData),
-                ]);
-
-                const riskScore = calculateRiskScore(marketData);
                 
-                return { marketData, historicalData, multiAssetData, riskScore, aiAnalysis };
+                updateDashboard(data);
+                updateRiskMeter(data);
+                
+                // Fetch and render multi-asset data
+                const multiAssetData = await fetchMultiAssetData();
+                renderMultiAssetGrid(multiAssetData, data);
+                
+                // Get AI analysis
+                const analysis = await getAIAnalysis(data);
+                const { execSummary, detailedAnalysis } = formatAIAnalysis(analysis);
+                
+                document.getElementById('execSummary').innerHTML = execSummary;
+                document.getElementById('detailedAnalysis').innerHTML = detailedAnalysis;
+                
             } catch (e) {
-                console.error(e);
-                throw e;
+                document.getElementById('error').textContent = 'Error: ' + e.message;
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
             }
         }
 
-        // --- UI Update Functions ---
-        function drawMiniChart(canvas, values, idPrefix) {
-            if (!canvas || !canvas.getContext) return;
-
-            const legendMinEl = document.getElementById(`${idPrefix}ChartMin`);
-            const legendCurrentEl = document.getElementById(`${idPrefix}ChartCurrent`);
-            const legendMaxEl = document.getElementById(`${idPrefix}ChartMax`);
-
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.offsetWidth * 2;
-            canvas.height = canvas.offsetHeight * 2;
-            ctx.scale(2, 2);
-            
-            const w = canvas.offsetWidth;
-            const h = canvas.offsetHeight;
-            ctx.clearRect(0, 0, w, h);
-            
-            const min = Math.min(...values);
-            const max = Math.max(...values);
-            const range = max - min || 1;
-            const padding = 10;
-            
-            const isUptrend = values[values.length - 1] >= values[0];
-            const lineColor = isUptrend ? '#26de81' : '#ff6b6b';
-            const gradientColor = isUptrend ? 'rgba(38, 222, 129, 0.2)' : 'rgba(255, 107, 107, 0.2)';
-            
-            const gradient = ctx.createLinearGradient(0, 0, 0, h);
-            gradient.addColorStop(0, gradientColor);
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-            ctx.beginPath();
-            values.forEach((value, i) => {
-                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
-                const y = h - padding - ((value - min) / range) * (h - padding * 2);
-                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            });
-            ctx.lineTo(w - padding, h); ctx.lineTo(padding, h); ctx.closePath();
-            ctx.fillStyle = gradient; ctx.fill();
-
-            ctx.beginPath();
-            values.forEach((value, i) => {
-                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
-                const y = h - padding - ((value - min) / range) * (h - padding * 2);
-                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            });
-            ctx.strokeStyle = lineColor; ctx.lineWidth = 2; ctx.stroke();
-
-            values.forEach((value, i) => {
-                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
-                const y = h - padding - ((value - min) / range) * (h - padding * 2);
-                ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2);
-                ctx.fillStyle = lineColor; ctx.fill();
-                ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.stroke();
-            });
-
-            if(legendMinEl) legendMinEl.textContent = `Min: ${min.toFixed(2)}`;
-            if(legendCurrentEl) legendCurrentEl.textContent = `Current: ${values[values.length - 1].toFixed(2)}`;
-            if(legendMaxEl) legendMaxEl.textContent = `Max: ${max.toFixed(2)}`;
-        }
-
-        function createTrendMiniHTML(label, values, currentValue) {
-            const trendData = values.length > 0 ? values : [currentValue * 0.97, currentValue * 0.99, currentValue * 1.01, currentValue * 0.98, currentValue];
-            const trend = trendData[trendData.length - 1] > trendData[0] ? '↗' : '↘';
-            const trendClass = trendData[trendData.length - 1] > trendData[0] ? 'bullish' : 'bearish';
-            
-            const valuesHTML = trendData.map((v, i) => `
-                <span class="trend-value ${i === trendData.length - 1 ? trendClass : ''}">${v.toFixed(2)}</span>
-                ${i < trendData.length - 1 ? '<span class="trend-dot"></span>' : ''}
-            `).join('');
-
-            return `
-                <span class="trend-label">${label}:</span>
-                <div class="trend-values">${valuesHTML}</div>
-                <span class="trend-arrow-mini ${trendClass}">${trend}</span>
-            `;
-        }
-        
-        function updateUI(data) {
-            const { marketData, riskScore, multiAssetData, aiAnalysis, historicalData } = data;
-
-            // --- Update simple text/html content ---
-            document.getElementById('lastUpdated').textContent = `Last Updated: ${new Date().toLocaleString()}`;
-            document.getElementById('execSummary').innerHTML = aiAnalysis.execSummary;
-            document.getElementById('detailedAnalysis').innerHTML = aiAnalysis.detailedAnalysis;
-            document.getElementById('qqqPrice').textContent = `$${marketData.qqqPrice.toFixed(2)}`;
-            document.getElementById('qqq21').textContent = `$${marketData.qqq21.toFixed(2)}`;
-            document.getElementById('qqq50').textContent = `$${marketData.qqq50.toFixed(2)}`;
-            document.getElementById('fearGreedValue').textContent = marketData.fearGreed;
-            document.getElementById('vixEod').textContent = marketData.vixEod.toFixed(2);
-            document.getElementById('vix10ma').textContent = marketData.vix10ma.toFixed(2);
-            
-            // --- Update content with classes and arrows ---
-            const updateMetric = (id, value, type) => {
+        function updateDashboard(d) {
+            const set = (id, val, cls) => {
                 const el = document.getElementById(id);
                 if (el) {
-                    el.textContent = `${value.toFixed(2)}%${getTrendArrow(value)}`;
-                    el.className = `metric-value ${getColorClass(value, type)}`;
+                    if (val !== undefined) el.textContent = val;
+                    if (cls) el.className = cls;
                 }
             };
-            updateMetric('ma21vs50', marketData.ma21vs50, 'p');
-            updateMetric('crossTrendValue', marketData.ma21vs50, 'p');
-            updateMetric('qqq50maMain', marketData.qqq50ma, 'p');
-            updateMetric('vixVs10d', marketData.vixVs10d, 'vix');
-
-            // --- Risk Meter ---
-            const riskPercentage = (riskScore.score / riskScore.max) * 100;
-            let riskColor, riskLabelText;
-            if (riskPercentage <= 25) { riskColor = '#26de81'; riskLabelText = 'LOW RISK'; }
-            else if (riskPercentage <= 50) { riskColor = '#ffa502'; riskLabelText = 'MODERATE RISK'; }
-            else if (riskPercentage <= 75) { riskColor = '#ff6b6b'; riskLabelText = 'HIGH RISK'; }
-            else { riskColor = '#ff4757'; riskLabelText = 'CRITICAL RISK'; }
-
-            document.getElementById('riskMeterFill').style.width = `${riskPercentage}%`;
-            document.getElementById('riskMeterFill').style.background = `linear-gradient(90deg, ${riskColor} 0%, ${riskColor}dd 100%)`;
-            document.getElementById('riskMeterLabel').textContent = `${Math.round(riskScore.score)}/${riskScore.max} - ${riskLabelText}`;
-            document.getElementById('riskBreakdown').innerHTML = `
-                <div class="risk-factor"><span class="risk-factor-label">📊 VIX Level</span><span class="risk-factor-value">${riskScore.factors.vix.score}/30 - ${riskScore.factors.vix.label}</span></div>
-                <div class="risk-factor"><span class="risk-factor-label">📈 Price Position</span><span class="risk-factor-value">${riskScore.factors.position.score}/25 - ${riskScore.factors.position.label}</span></div>
-                <div class="risk-factor"><span class="risk-factor-label">🔄 Momentum</span><span class="risk-factor-value">${riskScore.factors.momentum.score}/20 - ${riskScore.factors.momentum.label}</span></div>
-                <div class="risk-factor"><span class="risk-factor-label">😨 Sentiment</span><span class="risk-factor-value">${riskScore.factors.sentiment.score}/25 - ${riskScore.factors.sentiment.label}</span></div>`;
-
-            // --- Badges ---
-            document.getElementById('riskBadgeContainer').innerHTML = `<span class="status-badge badge-${riskLabelText.toLowerCase().replace(' ', '-')}">${riskLabelText}</span>`;
-            const isBullish = marketData.crossStatus.toLowerCase().includes('bull');
-            document.getElementById('crossBadgeContainer').innerHTML = `<span class="status-badge ${isBullish ? 'badge-golden-cross' : 'badge-death-cross'}">${isBullish ? 'BULLISH SIGNAL' : 'BEARISH SIGNAL'}</span>`;
-            const fgs = getFearGreedStatus(marketData.fearGreed);
-            document.getElementById('fearGreedBadgeContainer').innerHTML = `<span class="status-badge ${fgs.class}">${fgs.text}</span>`;
-            document.getElementById('fearGreedValue').className = `metric-value ${fgs.class.replace('badge-','')}`;
-
-            // --- AI Insights in cards ---
-            if (aiAnalysis.riskCardInsight) {
-                document.getElementById('riskCardInsight').textContent = aiAnalysis.riskCardInsight;
-                document.getElementById('riskCardInsightContainer').style.display = 'flex';
-            }
-            if (aiAnalysis.momentumCardInsight) {
-                document.getElementById('momentumCardInsight').textContent = aiAnalysis.momentumCardInsight;
-                document.getElementById('momentumCardInsightContainer').style.display = 'flex';
-            }
-
-            // --- Multi Asset Grid ---
-            const assets = [
-                { symbol: 'QQQ', data: { price: marketData.qqqPrice, change: 0, change_pct: marketData.qqq21ma, ma21: marketData.qqq21, ma50: marketData.qqq50, description: 'Nasdaq 100 ETF' } },
-                { symbol: 'SPY', data: { ...multiAssetData.SPY, description: 'S&P 500 ETF' } },
-                { symbol: 'TLT', data: { ...multiAssetData.TLT, description: '20+ Year Treasury' } },
-                { symbol: 'GLD', data: { ...multiAssetData.GLD, description: 'Gold ETF' } }
-            ];
-            document.getElementById('multiAssetGrid').innerHTML = assets.map(({ symbol, data }) => `
-                <div class="asset-card">
-                    <div class="asset-header">
-                        <div><div class="asset-name">${symbol}</div><div style="font-size: 0.85em; color: #888;">${data.description}</div></div>
-                        <div style="text-align: right;"><div class="asset-price">$${data.price.toFixed(2)}</div></div>
-                    </div>
-                    <div class="asset-change ${data.change_pct >= 0 ? 'bullish' : 'bearish'}">
-                        ${data.change_pct >= 0 ? '▲' : '▼'} ${Math.abs(data.change_pct).toFixed(2)}%
-                        ${symbol !== 'QQQ' ? ` ($${Math.abs(data.change).toFixed(2)})` : ''}
-                    </div>
-                    <div style="font-size: 0.85em; color: #888; margin-top: 10px;">
-                        <div>21MA: $${data.ma21.toFixed(2)}</div><div>50MA: $${data.ma50.toFixed(2)}</div>
-                    </div>
-                </div>`).join('');
-
-            // --- Mini Trends and Charts ---
-            document.getElementById('vixTrend').innerHTML = createTrendMiniHTML('5-Day VIX', historicalData.vix, marketData.vixEod);
-            document.getElementById('maTrend').innerHTML = createTrendMiniHTML('5-Day 21vs50', historicalData.ma21vs50, marketData.ma21vs50);
-            document.getElementById('priceTrend').innerHTML = createTrendMiniHTML('5-Day QQQ', historicalData.qqq, marketData.qqqPrice);
-            document.getElementById('fearGreedTrend').innerHTML = createTrendMiniHTML('5-Day F&G', historicalData.fearGreed, marketData.fearGreed);
-
-            drawMiniChart(document.getElementById('qqqChart'), historicalData.qqq.length > 0 ? historicalData.qqq : [marketData.qqqPrice], 'qqq');
-            drawMiniChart(document.getElementById('maChart'), historicalData.ma21vs50.length > 0 ? historicalData.ma21vs50 : [marketData.ma21vs50], 'ma');
-            drawMiniChart(document.getElementById('fgChart'), historicalData.fearGreed.length > 0 ? historicalData.fearGreed : [marketData.fearGreed], 'fg');
-        }
-
-        // --- App Initialization ---
-        function setPage(page) {
-            document.getElementById('page-dashboard').style.display = page === 'dashboard' ? 'block' : 'none';
-            document.getElementById('page-glossary').style.display = page === 'glossary' ? 'block' : 'none';
-            document.getElementById('nav-dashboard').classList.toggle('active', page === 'dashboard');
-            document.getElementById('nav-glossary').classList.toggle('active', page === 'glossary');
-        }
-
-        async function main() {
-            document.getElementById('nav-dashboard').addEventListener('click', () => setPage('dashboard'));
-            document.getElementById('nav-glossary').addEventListener('click', () => setPage('glossary'));
             
-            try {
-                const data = await loadData();
-                updateUI(data);
-                document.getElementById('loading').style.display = 'none';
-                setPage('dashboard'); // Show dashboard after loading
-            } catch (e) {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').textContent = `Failed to load market data: ${e.message}`;
-                document.getElementById('error').style.display = 'block';
+            const setHTML = (id, html) => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = html;
+            };
+            
+            set('qqqPrice', '$' + d.qqqPrice);
+            set('qqq21', '$' + d.qqq21);
+            set('qqq50', '$' + d.qqq50);
+            
+            const ma21 = parseFloat(d.ma21vs50);
+            set('ma21vs50', d.ma21vs50 + getTrendArrow(ma21), 'metric-value ' + getColorClass(ma21, 'p'));
+            set('crossTrendValue', d.ma21vs50 + getTrendArrow(ma21), 'metric-value ' + getColorClass(ma21, 'p'));
+            
+            const vix = parseFloat(d.vixEod);
+            let vixColorClass = '';
+            if (vix < 15) vixColorClass = 'greed';
+            else if (vix < 20) vixColorClass = 'neutral';
+            else if (vix < 30) vixColorClass = 'fear';
+            else vixColorClass = 'extreme-fear';
+            
+            set('vixEod', d.vixEod, 'metric-value ' + vixColorClass);
+            
+            const vix10 = parseFloat(d.vixVs10d);
+            set('vixVs10d', d.vixVs10d + getTrendArrow(vix10), 'metric-value ' + (vix10 > 0 ? 'fear' : 'neutral'));
+            
+            set('qqq21ma', d.qqq21ma, 'metric-value ' + getColorClass(parseFloat(d.qqq21ma), 'p'));
+            
+            const fg = parseFloat(d.fearGreed);
+            const fgs = getFearGreedStatus(fg);
+            
+            // Color code the Fear & Greed value based on level
+            let fgColorClass = '';
+            if (fg <= 25) fgColorClass = 'extreme-fear';
+            else if (fg <= 45) fgColorClass = 'fear';
+            else if (fg <= 55) fgColorClass = 'neutral';
+            else if (fg <= 75) fgColorClass = 'greed';
+            else fgColorClass = 'greed';
+            
+            set('fearGreedValue', d.fearGreed, 'metric-value ' + fgColorClass);
+            set('fearGreedBadge', fgs.text, 'status-badge ' + fgs.class);
+            
+            set('vix10ma', d.vix10ma);
+            
+            // Color code VIX 10MA
+            const vix10maVal = parseFloat(d.vix10ma);
+            let vix10maColorClass = '';
+            if (vix10maVal < 15) vix10maColorClass = 'greed';
+            else if (vix10maVal < 20) vix10maColorClass = 'neutral';
+            else if (vix10maVal < 30) vix10maColorClass = 'fear';
+            else vix10maColorClass = 'extreme-fear';
+            
+            const vix10maEl = document.getElementById('vix10ma');
+            if (vix10maEl) {
+                vix10maEl.className = 'metric-value ' + vix10maColorClass;
             }
-
-            setInterval(async () => {
-                try {
-                    console.log("Refreshing data...");
-                    const data = await loadData();
-                    updateUI(data);
-                } catch (e) {
-                    console.error("Background refresh failed:", e);
-                }
-            }, 3600000); // 1 hour
+            
+            const risk = d.riskLevel.toLowerCase();
+            let riskClass = 'badge-low-risk';
+            if (risk.includes('critical')) riskClass = 'badge-critical-risk';
+            else if (risk.includes('high')) riskClass = 'badge-high-risk';
+            else if (risk.includes('mid')) riskClass = 'badge-mid-risk';
+            set('mainRiskBadge', d.riskLevel.toUpperCase(), 'status-badge ' + riskClass);
+            
+            const cross = d.crossStatus.toLowerCase().includes('bull');
+            set('mainCrossBadge', cross ? 'BULLISH SIGNAL' : 'BEARISH SIGNAL', 
+                'status-badge ' + (cross ? 'badge-golden-cross' : 'badge-death-cross'));
+            
+            const q50 = parseFloat(d.qqq50ma);
+            set('qqq50maMain', d.qqq50ma + getTrendArrow(q50), 'metric-value ' + getColorClass(q50, 'p'));
+            
+            // Add historical trend mini-charts
+            setHTML('vixTrend', createTrendMini('5-Day VIX', historicalData.vix, parseFloat(d.vixEod)));
+            setHTML('priceTrend', createTrendMini('5-Day QQQ', historicalData.qqq, parseFloat(d.qqqPrice)));
+            setHTML('maTrend', createTrendMini('5-Day 21vs50', historicalData.ma21vs50, parseFloat(d.ma21vs50)));
+            setHTML('fearGreedTrend', createTrendMini('5-Day F&G', historicalData.fearGreed, parseFloat(d.fearGreed)));
+            
+            // Update visual charts
+            updateVisualCharts(d);
+            
+            set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('page-dashboard').style.display = 'block';
         }
-
-        main();
     </script>
 </body>
 </html>
