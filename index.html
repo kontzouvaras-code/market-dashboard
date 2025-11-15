@@ -1618,7 +1618,35 @@
         }
 
         loadData();
-        setInterval(loadData, 3600000);
+        
+        // Market hours optimization - only update during trading hours
+        // Saves ~80% on Claude API costs (~$2/month vs ~$10/month)
+        function isMarketHours() {
+            const now = new Date();
+            const day = now.getUTCDay(); // 0=Sunday, 6=Saturday
+            const hour = now.getUTCHours();
+            
+            // Convert to ET (UTC-5 or UTC-4 during DST)
+            // Simplified: Assume standard time (UTC-5)
+            // Market hours: 9:30 AM - 4:00 PM ET = 14:30 - 21:00 UTC
+            const etHour = (hour - 5 + 24) % 24;
+            
+            // Monday-Friday (1-5), 9 AM - 5 PM ET
+            const isWeekday = day >= 1 && day <= 5;
+            const isDuringHours = etHour >= 9 && etHour <= 17;
+            
+            return isWeekday && isDuringHours;
+        }
+        
+        // Check every hour if we should update
+        setInterval(() => {
+            if (isMarketHours()) {
+                console.log('📊 Market hours - refreshing data...');
+                loadData();
+            } else {
+                console.log('💤 Outside market hours - skipping update');
+            }
+        }, 3600000); // Still check every hour, but only load during market hours
     </script>
 </body>
 </html>
