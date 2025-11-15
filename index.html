@@ -389,6 +389,39 @@
             letter-spacing: 0.5px;
         }
         
+        /* AI Insight Boxes for Cards */
+        .ai-insight-box {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+        .ai-insight-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #a8b3ff;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .ai-badge-mini {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .ai-insight-content {
+            color: #e0e0ff;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+        
         /* Detailed Analysis */
         .summary-box {
             background: rgba(255, 255, 255, 0.05);
@@ -677,6 +710,13 @@
                             <span class="status-badge" id="mainRiskBadge">--</span>
                         </div>
                         <div id="vixTrend" class="trend-mini"></div>
+                        <div class="ai-insight-box" id="riskAIInsight">
+                            <div class="ai-insight-header">
+                                <span class="ai-badge-mini">AI</span>
+                                <span>Quick Insight</span>
+                            </div>
+                            <div class="ai-insight-content">Analyzing risk factors...</div>
+                        </div>
                     </div>
                     
                     <div class="card">
@@ -694,6 +734,13 @@
                             <span class="metric-value" id="qqq50maMain">--</span>
                         </div>
                         <div id="maTrend" class="trend-mini"></div>
+                        <div class="ai-insight-box" id="crossAIInsight">
+                            <div class="ai-insight-header">
+                                <span class="ai-badge-mini">AI</span>
+                                <span>Quick Insight</span>
+                            </div>
+                            <div class="ai-insight-content">Analyzing momentum...</div>
+                        </div>
                     </div>
                     
                     <div class="card">
@@ -1212,6 +1259,57 @@
             }
         }
 
+        function generateRiskInsight(data) {
+            const riskScore = calculateRiskScore(data).score;
+            const vix = parseFloat(data.vix10ma);
+            const fg = parseFloat(data.fearGreed);
+            
+            let insight = '';
+            
+            if (riskScore <= 25) {
+                insight = '✓ Favorable environment with ' + (vix < 15 ? 'low volatility' : 'controlled volatility') + 
+                         '. ' + (fg > 50 ? 'Market optimism supports positioning.' : 'Cautious sentiment may present opportunities.');
+            } else if (riskScore <= 50) {
+                insight = '⚠ Mixed signals detected. VIX at ' + vix.toFixed(1) + 
+                         ' suggests ' + (vix < 20 ? 'moderate' : 'elevated') + ' uncertainty. ' +
+                         'Consider selective positioning with stops.';
+            } else if (riskScore <= 75) {
+                insight = '⚠️ Elevated risk across multiple factors. ' +
+                         (vix > 25 ? 'High volatility (' + vix.toFixed(1) + ') ' : '') +
+                         'Defensive stance recommended with reduced exposure.';
+            } else {
+                insight = '🛑 Critical risk level. Multiple warning signals active. ' +
+                         'Cash preservation priority. Wait for improved conditions.';
+            }
+            
+            return insight;
+        }
+
+        function generateCrossInsight(data) {
+            const ma21vs50 = parseFloat(data.ma21vs50);
+            const qqq50ma = parseFloat(data.qqq50ma);
+            const vix = parseFloat(data.vix10ma);
+            
+            let insight = '';
+            
+            if (ma21vs50 > 2) {
+                insight = '🚀 Strong bullish momentum with ' + ma21vs50.toFixed(2) + '% spread. ' +
+                         'Price ' + (qqq50ma > 0 ? qqq50ma.toFixed(2) + '% above 50MA' : 'near support') + '. ' +
+                         'Trend strength supports continued upside.';
+            } else if (ma21vs50 > 0) {
+                insight = '↗ Positive but weakening momentum. 21MA/50MA spread narrowing to ' + 
+                         ma21vs50.toFixed(2) + '%. Watch for potential consolidation or reversal signals.';
+            } else if (ma21vs50 > -2) {
+                insight = '↘ Bearish cross confirmed. 21MA below 50MA by ' + Math.abs(ma21vs50).toFixed(2) + '%. ' +
+                         (vix > 20 ? 'Elevated volatility adds risk. ' : '') + 'Cautious approach warranted.';
+            } else {
+                insight = '⚠️ Strong bearish momentum. Death Cross with ' + Math.abs(ma21vs50).toFixed(2) + '% gap. ' +
+                         'Consider defensive positioning until trend reversal confirmed.';
+            }
+            
+            return insight;
+        }
+
         async function loadHistoricalData() {
             if (!HISTORICAL_CSV_URL) {
                 console.log('⚠️ No historical CSV URL configured, using mock data');
@@ -1387,6 +1485,23 @@
             setHTML('priceTrend', createTrendMini('5-Day QQQ', historicalData.qqq, parseFloat(d.qqqPrice)));
             setHTML('maTrend', createTrendMini('5-Day 21vs50', historicalData.ma21vs50, parseFloat(d.ma21vs50)));
             setHTML('fearGreedTrend', createTrendMini('5-Day F&G', historicalData.fearGreed, parseFloat(d.fearGreed)));
+            
+            // Update AI insight boxes
+            const riskInsightBox = document.getElementById('riskAIInsight');
+            if (riskInsightBox) {
+                const riskInsightContent = riskInsightBox.querySelector('.ai-insight-content');
+                if (riskInsightContent) {
+                    riskInsightContent.textContent = generateRiskInsight(d);
+                }
+            }
+            
+            const crossInsightBox = document.getElementById('crossAIInsight');
+            if (crossInsightBox) {
+                const crossInsightContent = crossInsightBox.querySelector('.ai-insight-content');
+                if (crossInsightContent) {
+                    crossInsightContent.textContent = generateCrossInsight(d);
+                }
+            }
             
             updateVisualCharts(d);
             
