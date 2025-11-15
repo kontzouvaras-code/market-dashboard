@@ -1,6 +1,6 @@
-// Save this file as: netlify/functions/analyze.js
+// netlify/functions/analyze.js
 
-exports.handler = async (event) => {
+export async function handler(event) {
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
@@ -12,33 +12,42 @@ exports.handler = async (event) => {
   try {
     const data = JSON.parse(event.body);
     
-    const prompt = `You are a professional market analyst. Analyze the following market data and provide a detailed 4-6 sentence analysis with actionable insights and strategic recommendations:
+    // Build a structured prompt for Claude
+    const prompt = `You are a financial market analyst providing concise, structured market analysis. Analyze the following market data and provide a STRUCTURED response with clear sections.
 
 Market Data:
 - QQQ Price: $${data.qqqPrice}
-- QQQ 21-Day MA: $${data.qqq21} (QQQ is ${data.qqq21ma} from 21MA)
-- QQQ 50-Day MA: $${data.qqq50} (QQQ is ${data.qqq50ma} from 50MA)
-- 21MA vs 50MA: ${data.ma21vs50}
-- VIX (Fear Index): ${data.vixEod}
-- VIX vs 10-Day Avg: ${data.vixVs10d}
-- CNN Fear & Greed Index: ${data.fearGreed}
+- QQQ 21-Day MA: $${data.qqq21}
+- QQQ 50-Day MA: $${data.qqq50}
+- 21MA vs 50MA: ${data.ma21vs50}%
+- VIX (Current): ${data.vixEod}
 - VIX 10-Day MA: ${data.vix10ma}
+- VIX vs 10-Day Avg: ${data.vixVs10d}%
+- QQQ Distance from 21MA: ${data.qqq21ma}%
+- QQQ Distance from 50MA: ${data.qqq50ma}%
+- CNN Fear & Greed Index: ${data.fearGreed}
 - Risk Level: ${data.riskLevel}
 - Cross Status: ${data.crossStatus}
 
-Provide a comprehensive analysis that:
-1. Interprets the current market conditions and what they signal
-2. Explains the significance of the risk indicators and moving average positioning
-3. Discusses potential opportunities or risks based on these readings
-4. Suggests practical considerations for market positioning and timing
-5. Offers actionable insights for decision-making
+Provide analysis in EXACTLY this format with these exact section headers:
 
-Be thorough and insightful in your analysis.`;
+**MARKET POSITIONING: [Brief Title]**
 
-    // Use node-fetch or global fetch
-    const fetchModule = globalThis.fetch || (await import('node-fetch')).default;
-    
-    const response = await fetchModule('https://api.anthropic.com/v1/messages', {
+**Current Market Conditions**
+[2-3 concise sentences about QQQ's position relative to moving averages and what this indicates about trend strength/weakness]
+
+**Risk Indicator Assessment**
+[2-3 sentences about VIX levels, Fear & Greed index, and overall sentiment conditions]
+
+**Strategic Opportunities**
+[2-3 sentences about what the current setup offers for investors, including specific price levels to watch]
+
+**Positioning Recommendations**
+[2-3 sentences with actionable guidance: position sizing, key support/resistance levels, stop levels, and time horizon]
+
+Keep each section focused and concise. Use specific numbers from the data. Highlight key price levels like $${data.qqq50}.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +56,7 @@ Be thorough and insightful in your analysis.`;
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 800,
+        max_tokens: 1024,
         messages: [{
           role: 'user',
           content: prompt
@@ -56,25 +65,25 @@ Be thorough and insightful in your analysis.`;
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error('AI analysis failed: ' + response.status + ' - ' + errorText);
+      const errorData = await response.text();
+      console.error('Anthropic API Error:', errorData);
+      throw new Error(`API request failed: ${response.status}`);
     }
 
     const result = await response.json();
-    
+    const analysis = result.content[0].text;
+
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({ 
-        analysis: result.content[0].text 
-      })
+      body: JSON.stringify({ analysis })
     };
 
   } catch (error) {
-    console.error('Function error:', error);
+    console.error('Error:', error);
     return {
       statusCode: 500,
       headers: {
@@ -83,8 +92,8 @@ Be thorough and insightful in your analysis.`;
       },
       body: JSON.stringify({ 
         error: 'Analysis failed',
-        message: error.message 
+        analysis: 'AI analysis temporarily unavailable. Please check back shortly.'
       })
     };
   }
-};
+}
