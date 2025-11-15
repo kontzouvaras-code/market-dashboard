@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Risk Monitor</title>
+    <title>Market Risk Monitor - Enhanced</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,7 +13,7 @@
             padding: 20px;
             min-height: 100vh;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1600px; margin: 0 auto; }
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 {
             font-size: 2.5em;
@@ -33,6 +33,8 @@
             text-align: center;
             color: #ff4757;
         }
+        
+        /* Executive Summary */
         .exec-summary {
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 153, 255, 0.1) 100%);
             backdrop-filter: blur(10px);
@@ -66,76 +68,79 @@
             font-weight: 700;
             letter-spacing: 1px;
         }
-        .summary-box {
+        
+        /* Risk Score Meter */
+        .risk-meter-container {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 165, 2, 0.3);
+            border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
-            line-height: 1.8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .detailed-analysis-header {
-            color: #ffa502;
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-align: center;
-            padding: 15px;
-            border-bottom: 2px solid rgba(255, 165, 2, 0.3);
-        }
-        .summary-header {
-            color: #ffa502;
+        .risk-meter-title {
             font-size: 1.3em;
             font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .ai-badge {
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.65em;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .analysis-section {
             margin-bottom: 20px;
-        }
-        .analysis-section:last-child {
-            margin-bottom: 0;
-        }
-        .section-title {
             color: #00d4ff;
-            font-weight: 600;
-            font-size: 1.05em;
-            margin-bottom: 8px;
+            text-align: center;
+        }
+        .risk-meter {
+            position: relative;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .risk-meter-fill {
+            height: 100%;
+            transition: width 1s ease, background 1s ease;
+            border-radius: 20px;
+            position: relative;
+        }
+        .risk-meter-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+        .risk-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .risk-factor {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            font-size: 0.9em;
         }
-        .section-icon {
-            font-size: 1.2em;
+        .risk-factor-label { color: #ccc; }
+        .risk-factor-value { font-weight: 600; }
+        
+        /* Multi-Asset Dashboard */
+        .multi-asset-section {
+            margin-bottom: 30px;
         }
-        .section-content {
-            color: #e0e0e0;
-            font-size: 0.95em;
-            line-height: 1.7;
-            padding-left: 28px;
-        }
-        .highlight {
-            color: #ffa502;
+        .section-header {
+            font-size: 1.3em;
             font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
         }
-        .key-level {
-            background: rgba(255, 165, 2, 0.15);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
+        
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -166,6 +171,73 @@
         .metric:last-child { border-bottom: none; }
         .metric-label { font-size: 0.9em; color: #ccc; }
         .metric-value { font-size: 1.2em; font-weight: 600; }
+        
+        /* Historical Trend Mini Chart */
+        .trend-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .trend-label {
+            font-size: 0.85em;
+            color: #888;
+            min-width: 80px;
+        }
+        .trend-values {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .trend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #666;
+        }
+        .trend-value {
+            font-size: 0.85em;
+            color: #aaa;
+            font-family: 'Courier New', monospace;
+        }
+        .trend-arrow-mini {
+            font-size: 1.2em;
+            margin-left: 5px;
+        }
+        
+        /* Asset Comparison Cards */
+        .asset-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .asset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .asset-name {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .asset-price {
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+        .asset-change {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        /* Colors */
         .extreme-fear { color: #ff4757; }
         .fear { color: #ff6b6b; }
         .neutral { color: #ffa502; }
@@ -173,7 +245,11 @@
         .bullish { color: #26de81; }
         .bearish { color: #ff4757; }
         .mid-risk { color: #ffa502; }
-        .large-value { font-size: 3em; font-weight: 700; text-align: center; margin: 20px 0; }
+        .low-risk { color: #26de81; }
+        .high-risk { color: #ff6b6b; }
+        .critical-risk { color: #8B0000; }
+        
+        /* Badges */
         .status-badge {
             display: inline-block;
             padding: 5px 15px;
@@ -203,25 +279,84 @@
             color: #ff4757;
             border: 2px solid #ff4757;
         }
+        .badge-mid-risk {
+            background: rgba(255, 165, 2, 0.2);
+            color: #ffa502;
+            border: 2px solid #ffa502;
+        }
         .badge-low-risk {
             background: rgba(38, 222, 129, 0.2);
             color: #26de81;
             border: 2px solid #26de81;
         }
-        .badge-extreme-fear { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
-        .badge-fear { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
-        .badge-neutral { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid #ffa502; }
-        .badge-mid-risk { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid #ffa502; }
-        .badge-bullish { background: rgba(38, 222, 129, 0.2); color: #26de81; border: 1px solid #26de81; }
-        .badge-greed { background: rgba(38, 222, 129, 0.2); color: #26de81; border: 1px solid #26de81; }
-        .badge-bearish { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
+        .ai-badge {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.65em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Detailed Analysis */
+        .summary-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 165, 2, 0.3);
+            padding: 25px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        .detailed-analysis-header {
+            color: #ffa502;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 15px;
+            border-bottom: 2px solid rgba(255, 165, 2, 0.3);
+        }
+        .analysis-section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            color: #00d4ff;
+            font-weight: 600;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-icon {
+            font-size: 1.2em;
+        }
+        .section-content {
+            color: #e0e0e0;
+            font-size: 0.95em;
+            line-height: 1.7;
+            padding-left: 28px;
+        }
+        .highlight {
+            color: #ffa502;
+            font-weight: 600;
+        }
+        .key-level {
+            background: rgba(255, 165, 2, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .large-value { font-size: 3em; font-weight: 700; text-align: center; margin: 20px 0; }
         .trend-arrow { font-size: 1.2em; margin-left: 5px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Market Risk Monitor</h1>
+            <h1>📊 Market Risk Monitor</h1>
             <div class="last-updated" id="lastUpdated">Loading...</div>
         </div>
 
@@ -229,7 +364,7 @@
         <div id="error" class="error" style="display: none;"></div>
         
         <div id="dashboard" style="display: none;">
-            <!-- Executive Summary at the top -->
+            <!-- Executive Summary -->
             <div class="exec-summary">
                 <div class="exec-summary-header">
                     <span>📋</span>
@@ -241,107 +376,122 @@
                 </div>
             </div>
             
-            <!-- Dashboard cards in the middle -->
-            <div class="dashboard">
-                <div class="card">
-                    <div class="card-title">Advanced Risk Assessment</div>
-                    <div class="card-subtitle">Multi-factor algorithmic risk evaluation</div>
-                    <div style="text-align: center; margin: 15px 0;">
-                        <span class="status-badge" id="mainRiskBadge">--</span>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 0.85em; color: #888; line-height: 1.6;">
-                        <div style="margin-bottom: 8px;">
-                            <strong style="color: #ff4757;">Critical Risk:</strong> VIX 10MA ≥30 OR price below all MAs
-                        </div>
-                        <div style="margin-bottom: 8px;">
-                            <strong style="color: #ff6b6b;">High Risk:</strong> VIX 10MA &gt;25 OR price below 21MA & 50MA
-                        </div>
-                        <div style="margin-bottom: 8px;">
-                            <strong style="color: #ffa502;">Mid Risk:</strong> VIX 10MA &gt;20 OR price below 21MA
-                        </div>
-                        <div>
-                            <strong style="color: #26de81;">Low Risk:</strong> Favorable conditions
-                        </div>
-                    </div>
+            <!-- Risk Score Meter -->
+            <div class="risk-meter-container">
+                <div class="risk-meter-title">🎯 Composite Risk Score</div>
+                <div class="risk-meter">
+                    <div class="risk-meter-fill" id="riskMeterFill"></div>
+                    <div class="risk-meter-label" id="riskMeterLabel">Calculating...</div>
                 </div>
-                
-                <div class="card">
-                    <div class="card-title">Golden/Death Cross Analysis</div>
-                    <div class="card-subtitle">21-Day vs 50-Day MA crossover</div>
-                    <div style="text-align: center; margin: 15px 0;">
-                        <span class="status-badge" id="mainCrossBadge">--</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Short-term Trend (21 vs 50)</span>
-                        <span class="metric-value" id="crossTrendValue">--</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">QQQ Distance from 50MA</span>
-                        <span class="metric-value" id="qqq50maMain">--</span>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 0.85em; color: #888; line-height: 1.6;">
-                        <div style="margin-bottom: 8px;">
-                            <strong style="color: #26de81;">Golden Cross:</strong> Bullish momentum signal
+                <div class="risk-breakdown" id="riskBreakdown"></div>
+            </div>
+            
+            <!-- Multi-Asset Dashboard -->
+            <div class="multi-asset-section">
+                <div class="section-header">🌐 Multi-Asset Overview</div>
+                <div class="dashboard" id="multiAssetGrid"></div>
+            </div>
+            
+            <!-- QQQ Primary Dashboard -->
+            <div class="multi-asset-section">
+                <div class="section-header">📈 QQQ Detailed Metrics</div>
+                <div class="dashboard">
+                    <div class="card">
+                        <div class="card-title">Advanced Risk Assessment</div>
+                        <div class="card-subtitle">Multi-factor algorithmic risk evaluation</div>
+                        <div style="text-align: center; margin: 15px 0;">
+                            <span class="status-badge" id="mainRiskBadge">--</span>
                         </div>
-                        <div>
-                            <strong style="color: #ff4757;">Death Cross:</strong> Bearish momentum signal
+                        <div id="vixTrend" class="trend-mini"></div>
+                        <div style="margin-top: 15px; font-size: 0.85em; color: #888; line-height: 1.6;">
+                            <div style="margin-bottom: 8px;">
+                                <strong style="color: #ff4757;">Critical Risk:</strong> VIX 10MA ≥30 OR price below all MAs
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <strong style="color: #ff6b6b;">High Risk:</strong> VIX 10MA &gt;25 OR price below 21MA & 50MA
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <strong style="color: #ffa502;">Mid Risk:</strong> VIX 10MA &gt;20 OR price below 21MA
+                            </div>
+                            <div>
+                                <strong style="color: #26de81;">Low Risk:</strong> Favorable conditions
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">QQQ Moving Averages</div>
-                    <div class="card-subtitle">Price relative to key MAs</div>
-                    <div class="metric">
-                        <span class="metric-label">Current Price</span>
-                        <span class="metric-value" id="qqqPrice">--</span>
+                    
+                    <div class="card">
+                        <div class="card-title">Golden/Death Cross Analysis</div>
+                        <div class="card-subtitle">21-Day vs 50-Day MA crossover</div>
+                        <div style="text-align: center; margin: 15px 0;">
+                            <span class="status-badge" id="mainCrossBadge">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Short-term Trend (21 vs 50)</span>
+                            <span class="metric-value" id="crossTrendValue">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">QQQ Distance from 50MA</span>
+                            <span class="metric-value" id="qqq50maMain">--</span>
+                        </div>
+                        <div id="maTrend" class="trend-mini"></div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">21-Day MA</span>
-                        <span class="metric-value" id="qqq21">--</span>
+                    
+                    <div class="card">
+                        <div class="card-title">QQQ Moving Averages</div>
+                        <div class="card-subtitle">Price relative to key MAs</div>
+                        <div class="metric">
+                            <span class="metric-label">Current Price</span>
+                            <span class="metric-value" id="qqqPrice">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">21-Day MA</span>
+                            <span class="metric-value" id="qqq21">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">50-Day MA</span>
+                            <span class="metric-value" id="qqq50">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">21 vs 50 Trend</span>
+                            <span class="metric-value" id="ma21vs50">--</span>
+                        </div>
+                        <div id="priceTrend" class="trend-mini"></div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">50-Day MA</span>
-                        <span class="metric-value" id="qqq50">--</span>
+                    
+                    <div class="card">
+                        <div class="card-title">Market Sentiment & Volatility</div>
+                        <div class="card-subtitle">Short and mid-term fear indicators</div>
+                        <div class="metric">
+                            <span class="metric-label">VIX (Fear Index)</span>
+                            <span class="metric-value" id="vixEod">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">VIX 10-Day MA</span>
+                            <span class="metric-value" id="vix10ma">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">VIX vs 10-Day Avg</span>
+                            <span class="metric-value" id="vixVs10d">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">QQQ from 21MA</span>
+                            <span class="metric-value" id="qqq21ma">--</span>
+                        </div>
+                        <div id="fearGreedTrend" class="trend-mini"></div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">21 vs 50 Trend</span>
-                        <span class="metric-value" id="ma21vs50">--</span>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">Market Sentiment & Volatility</div>
-                    <div class="card-subtitle">Short and mid-term fear indicators</div>
-                    <div class="metric">
-                        <span class="metric-label">VIX (Fear Index)</span>
-                        <span class="metric-value" id="vixEod">--</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">VIX 10-Day MA</span>
-                        <span class="metric-value" id="vix10ma">--</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">VIX vs 10-Day Avg</span>
-                        <span class="metric-value" id="vixVs10d">--</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">QQQ from 21MA</span>
-                        <span class="metric-value" id="qqq21ma">--</span>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">CNN Fear & Greed</div>
-                    <div class="card-subtitle">Sentiment composite (0-100)</div>
-                    <div class="large-value" id="fearGreedValue">--</div>
-                    <div style="text-align: center;">
-                        <span class="status-badge" id="fearGreedBadge">--</span>
+                    
+                    <div class="card">
+                        <div class="card-title">CNN Fear & Greed</div>
+                        <div class="card-subtitle">Sentiment composite (0-100)</div>
+                        <div class="large-value" id="fearGreedValue">--</div>
+                        <div style="text-align: center;">
+                            <span class="status-badge" id="fearGreedBadge">--</span>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Detailed Analysis at the bottom -->
+            <!-- Detailed Analysis -->
             <div class="summary-box">
                 <div class="detailed-analysis-header">
                     📊 Detailed Market Analysis
@@ -354,6 +504,14 @@
 
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=2141065289&single=true&output=csv';
+        
+        // Historical data storage (mock for now - you'll populate this from your sheets)
+        let historicalData = {
+            vix: [],
+            qqq: [],
+            ma21vs50: [],
+            fearGreed: []
+        };
 
         function getTrendArrow(v) {
             return v > 0 ? ' ↑' : v < 0 ? ' ↓' : '';
@@ -371,19 +529,182 @@
             if (v <= 75) return { text: 'GREED', class: 'badge-greed' };
             return { text: 'EXTREME GREED', class: 'badge-greed' };
         }
+        
+        function calculateRiskScore(data) {
+            let score = 0;
+            const factors = {};
+            
+            // VIX Factor (0-30 points)
+            const vix10 = parseFloat(data.vix10ma);
+            if (vix10 >= 30) { score += 30; factors.vix = { score: 30, label: 'Critical' }; }
+            else if (vix10 >= 25) { score += 22; factors.vix = { score: 22, label: 'High' }; }
+            else if (vix10 >= 20) { score += 15; factors.vix = { score: 15, label: 'Elevated' }; }
+            else { score += 5; factors.vix = { score: 5, label: 'Low' }; }
+            
+            // Price vs MA Factor (0-25 points)
+            const qqq21ma = parseFloat(data.qqq21ma);
+            const qqq50ma = parseFloat(data.qqq50ma);
+            if (qqq21ma < 0 && qqq50ma < 0) { score += 25; factors.position = { score: 25, label: 'Below All MAs' }; }
+            else if (qqq21ma < 0) { score += 15; factors.position = { score: 15, label: 'Below 21MA' }; }
+            else if (qqq50ma < 0) { score += 10; factors.position = { score: 10, label: 'Below 50MA' }; }
+            else { score += 0; factors.position = { score: 0, label: 'Above MAs' }; }
+            
+            // Cross Status Factor (0-20 points)
+            const ma21vs50 = parseFloat(data.ma21vs50);
+            if (ma21vs50 < 0) { score += 20; factors.momentum = { score: 20, label: 'Death Cross' }; }
+            else if (ma21vs50 < 1) { score += 10; factors.momentum = { score: 10, label: 'Weak Golden' }; }
+            else { score += 0; factors.momentum = { score: 0, label: 'Golden Cross' }; }
+            
+            // Fear & Greed Factor (0-25 points)
+            const fg = parseFloat(data.fearGreed);
+            if (fg <= 25) { score += 20; factors.sentiment = { score: 20, label: 'Extreme Fear' }; }
+            else if (fg <= 45) { score += 12; factors.sentiment = { score: 12, label: 'Fear' }; }
+            else if (fg >= 75) { score += 15; factors.sentiment = { score: 15, label: 'Extreme Greed' }; }
+            else { score += 5; factors.sentiment = { score: 5, label: 'Neutral' }; }
+            
+            return { score, factors, max: 100 };
+        }
+        
+        function updateRiskMeter(data) {
+            const risk = calculateRiskScore(data);
+            const percentage = (risk.score / risk.max) * 100;
+            
+            const fill = document.getElementById('riskMeterFill');
+            const label = document.getElementById('riskMeterLabel');
+            
+            // Set color based on risk level
+            let color;
+            let riskLabel;
+            if (percentage <= 25) { color = '#26de81'; riskLabel = 'LOW RISK'; }
+            else if (percentage <= 50) { color = '#ffa502'; riskLabel = 'MODERATE RISK'; }
+            else if (percentage <= 75) { color = '#ff6b6b'; riskLabel = 'HIGH RISK'; }
+            else { color = '#8B0000'; riskLabel = 'CRITICAL RISK'; }
+            
+            fill.style.width = percentage + '%';
+            fill.style.background = `linear-gradient(90deg, ${color} 0%, ${color}dd 100%)`;
+            label.textContent = `${Math.round(risk.score)}/${risk.max} - ${riskLabel}`;
+            
+            // Update breakdown
+            const breakdown = document.getElementById('riskBreakdown');
+            breakdown.innerHTML = `
+                <div class="risk-factor">
+                    <span class="risk-factor-label">📊 VIX Level</span>
+                    <span class="risk-factor-value">${risk.factors.vix.score}/30 - ${risk.factors.vix.label}</span>
+                </div>
+                <div class="risk-factor">
+                    <span class="risk-factor-label">📈 Price Position</span>
+                    <span class="risk-factor-value">${risk.factors.position.score}/25 - ${risk.factors.position.label}</span>
+                </div>
+                <div class="risk-factor">
+                    <span class="risk-factor-label">🔄 Momentum</span>
+                    <span class="risk-factor-value">${risk.factors.momentum.score}/20 - ${risk.factors.momentum.label}</span>
+                </div>
+                <div class="risk-factor">
+                    <span class="risk-factor-label">😨 Sentiment</span>
+                    <span class="risk-factor-value">${risk.factors.sentiment.score}/25 - ${risk.factors.sentiment.label}</span>
+                </div>
+            `;
+        }
+        
+        function createTrendMini(label, values, currentValue) {
+            if (!values || values.length === 0) {
+                // Mock historical data for demonstration
+                values = [currentValue * 0.97, currentValue * 0.99, currentValue * 1.01, currentValue * 0.98, currentValue];
+            }
+            
+            const trend = values[values.length - 1] > values[0] ? '↗' : '↘';
+            const trendClass = values[values.length - 1] > values[0] ? 'bullish' : 'bearish';
+            
+            return `
+                <span class="trend-label">${label}:</span>
+                <div class="trend-values">
+                    ${values.map((v, i) => `
+                        <span class="trend-value ${i === values.length - 1 ? trendClass : ''}">${typeof v === 'number' ? v.toFixed(2) : v}</span>
+                        ${i < values.length - 1 ? '<span class="trend-dot"></span>' : ''}
+                    `).join('')}
+                    <span class="trend-arrow-mini ${trendClass}">${trend}</span>
+                </div>
+            `;
+        }
+        
+        async function fetchMultiAssetData() {
+            // For now, we'll use mock data
+            // In production, you'd fetch from your Google Sheets or a financial API
+            return {
+                SPY: { price: 580.45, change: 0.45, change_pct: 0.08, ma21: 575.20, ma50: 568.30 },
+                TLT: { price: 92.15, change: -0.32, change_pct: -0.35, ma21: 92.80, ma50: 93.50 },
+                GLD: { price: 245.67, change: 1.23, change_pct: 0.50, ma21: 244.10, ma50: 242.80 }
+            };
+        }
+        
+        function renderMultiAssetGrid(assets, qqqData) {
+            const grid = document.getElementById('multiAssetGrid');
+            
+            // Add QQQ first
+            const qqqChange = parseFloat(qqqData.qqq21ma);
+            const qqqHtml = `
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div>
+                            <div class="asset-name">QQQ</div>
+                            <div style="font-size: 0.85em; color: #888;">Nasdaq 100 ETF</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="asset-price">$${qqqData.qqqPrice}</div>
+                        </div>
+                    </div>
+                    <div class="asset-change ${qqqChange >= 0 ? 'bullish' : 'bearish'}">
+                        ${qqqChange >= 0 ? '▲' : '▼'} ${Math.abs(qqqChange).toFixed(2)}%
+                    </div>
+                    <div style="font-size: 0.85em; color: #888; margin-top: 10px;">
+                        <div>21MA: $${qqqData.qqq21}</div>
+                        <div>50MA: $${qqqData.qqq50}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Add other assets
+            const assetsHtml = Object.entries(assets).map(([symbol, data]) => {
+                const changeClass = data.change >= 0 ? 'bullish' : 'bearish';
+                const arrow = data.change >= 0 ? '▲' : '▼';
+                let description = '';
+                if (symbol === 'SPY') description = 'S&P 500 ETF';
+                else if (symbol === 'TLT') description = '20+ Year Treasury';
+                else if (symbol === 'GLD') description = 'Gold ETF';
+                
+                return `
+                    <div class="asset-card">
+                        <div class="asset-header">
+                            <div>
+                                <div class="asset-name">${symbol}</div>
+                                <div style="font-size: 0.85em; color: #888;">${description}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="asset-price">$${data.price.toFixed(2)}</div>
+                            </div>
+                        </div>
+                        <div class="asset-change ${changeClass}">
+                            ${arrow} ${Math.abs(data.change_pct).toFixed(2)}% ($${Math.abs(data.change).toFixed(2)})
+                        </div>
+                        <div style="font-size: 0.85em; color: #888; margin-top: 10px;">
+                            <div>21MA: $${data.ma21.toFixed(2)}</div>
+                            <div>50MA: $${data.ma50.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = qqqHtml + assetsHtml;
+        }
 
         function formatAIAnalysis(rawAnalysis) {
-            // Split analysis into executive summary and detailed sections
             let execSummary = '';
             let detailedAnalysis = '';
             
-            // Check if analysis has a clear structure
             if (rawAnalysis.includes('**MARKET POSITIONING**') || rawAnalysis.includes('MARKET POSITIONING:')) {
-                // Extract the title/first line for exec summary
                 const lines = rawAnalysis.split('\n').filter(line => line.trim());
                 const firstLine = lines[0] || '';
                 
-                // Get the title line (MARKET POSITIONING: ...)
                 const titleMatch = firstLine.match(/\*\*MARKET POSITIONING:\s*(.+?)\*\*/i) || 
                                    firstLine.match(/MARKET POSITIONING:\s*(.+)/i);
                 
@@ -391,7 +712,6 @@
                     execSummary = titleMatch[1].trim();
                 }
                 
-                // If we still don't have a summary, try to extract key points from Current Market Conditions
                 if (!execSummary || execSummary.includes('**')) {
                     const conditionsMatch = rawAnalysis.match(/\*\*Current Market Conditions\*\*\s*\n(.+?)(?=\n\*\*|$)/is);
                     if (conditionsMatch) {
@@ -399,10 +719,8 @@
                     }
                 }
                 
-                // Format detailed analysis with structure
                 detailedAnalysis = formatDetailedSections(rawAnalysis);
             } else {
-                // If unstructured, use first sentence for exec summary
                 const sentences = rawAnalysis.split(/[.!?]+/);
                 execSummary = sentences[0] + '.';
                 detailedAnalysis = '<div class="section-content">' + 
@@ -424,7 +742,6 @@
                 line = line.trim();
                 if (!line) return;
                 
-                // Check for section headers
                 if (line.includes('MARKET POSITIONING') || line.includes('Market Positioning')) {
                     if (currentSection) formattedHTML += '</div></div>';
                     formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">📊</span>Market Positioning</div><div class="section-content">';
@@ -446,13 +763,11 @@
                     formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">🎯</span>Action Items</div><div class="section-content">';
                     currentSection = 'recommendations';
                 } else if (currentSection && line.length > 0 && !line.startsWith('**MARKET')) {
-                    // Clean up markdown-style formatting
                     let cleanLine = line
                         .replace(/\*\*/g, '')
                         .replace(/^\-\s+/, '• ')
                         .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>');
                     
-                    // Highlight percentages
                     cleanLine = cleanLine.replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>');
                     
                     formattedHTML += cleanLine + '<br>';
@@ -513,8 +828,13 @@
                 };
                 
                 updateDashboard(data);
+                updateRiskMeter(data);
                 
-                // Get AI analysis after updating the dashboard
+                // Fetch and render multi-asset data
+                const multiAssetData = await fetchMultiAssetData();
+                renderMultiAssetGrid(multiAssetData, data);
+                
+                // Get AI analysis
                 const analysis = await getAIAnalysis(data);
                 const { execSummary, detailedAnalysis } = formatAIAnalysis(analysis);
                 
@@ -535,6 +855,11 @@
                     if (val !== undefined) el.textContent = val;
                     if (cls) el.className = cls;
                 }
+            };
+            
+            const setHTML = (id, html) => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = html;
             };
             
             set('qqqPrice', '$' + d.qqqPrice);
@@ -574,9 +899,12 @@
             const q50 = parseFloat(d.qqq50ma);
             set('qqq50maMain', d.qqq50ma + getTrendArrow(q50), 'metric-value ' + getColorClass(q50, 'p'));
             
-            set('summaryText', 'Getting AI analysis...');
-            set('execSummary', 'Getting AI analysis...');
-            set('detailedAnalysis', 'Getting AI analysis...');
+            // Add historical trend mini-charts
+            setHTML('vixTrend', createTrendMini('5-Day VIX', historicalData.vix, parseFloat(d.vixEod)));
+            setHTML('priceTrend', createTrendMini('5-Day QQQ', historicalData.qqq, parseFloat(d.qqqPrice)));
+            setHTML('maTrend', createTrendMini('5-Day 21vs50', historicalData.ma21vs50, parseFloat(d.ma21vs50)));
+            setHTML('fearGreedTrend', createTrendMini('5-Day F&G', historicalData.fearGreed, parseFloat(d.fearGreed)));
+            
             set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
             
             document.getElementById('loading').style.display = 'none';
@@ -584,7 +912,7 @@
         }
 
         loadData();
-        setInterval(loadData, 3600000);
+        setInterval(loadData, 3600000); // Refresh every hour
     </script>
 </body>
 </html>
