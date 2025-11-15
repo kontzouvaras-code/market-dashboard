@@ -763,6 +763,13 @@
                             <span class="metric-value" id="ma21vs50">--</span>
                         </div>
                         <div id="priceTrend" class="trend-mini"></div>
+                        <div class="ai-insight-box" id="maAIInsight">
+                            <div class="ai-insight-header">
+                                <span class="ai-badge-mini">AI</span>
+                                <span>Quick Insight</span>
+                            </div>
+                            <div class="ai-insight-content">Analyzing price position...</div>
+                        </div>
                     </div>
                     
                     <div class="card">
@@ -788,6 +795,13 @@
                             <span class="status-badge" id="fearGreedBadge">--</span>
                         </div>
                         <div id="fearGreedTrend" class="trend-mini"></div>
+                        <div class="ai-insight-box" id="sentimentAIInsight">
+                            <div class="ai-insight-header">
+                                <span class="ai-badge-mini">AI</span>
+                                <span>Quick Insight</span>
+                            </div>
+                            <div class="ai-insight-content">Analyzing sentiment...</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1310,6 +1324,78 @@
             return insight;
         }
 
+        function generateMAInsight(data) {
+            const qqq21ma = parseFloat(data.qqq21ma);
+            const qqq50ma = parseFloat(data.qqq50ma);
+            const price = parseFloat(data.qqqPrice);
+            const ma21 = parseFloat(data.qqq21);
+            const ma50 = parseFloat(data.qqq50);
+            
+            let insight = '';
+            
+            if (qqq21ma > 2 && qqq50ma > 2) {
+                insight = '💪 Strong bullish structure. Price trading well above both MAs (' + 
+                         qqq21ma.toFixed(2) + '% above 21MA, ' + qqq50ma.toFixed(2) + '% above 50MA). ' +
+                         'Uptrend firmly intact with room to run.';
+            } else if (qqq21ma > 0 && qqq50ma > 0) {
+                insight = '✓ Healthy positioning above key support levels. ' +
+                         '21MA at $' + ma21.toFixed(2) + ' and 50MA at $' + ma50.toFixed(2) + ' acting as support. ' +
+                         'Dips toward MAs may offer entry opportunities.';
+            } else if (qqq21ma < 0 && qqq50ma > 0) {
+                insight = '⚠ Short-term weakness with price below 21MA ($' + ma21.toFixed(2) + ') but above 50MA ($' + ma50.toFixed(2) + '). ' +
+                         'Watch $' + ma50.toFixed(2) + ' as critical support level.';
+            } else if (qqq21ma < 0 && qqq50ma < 0) {
+                insight = '📉 Price below both key MAs. 21MA at $' + ma21.toFixed(2) + ' and 50MA at $' + ma50.toFixed(2) + ' now resistance. ' +
+                         'Wait for reclaim of $' + ma21.toFixed(2) + ' for bullish confirmation.';
+            } else {
+                insight = '📊 Price action around key moving averages. Monitor for directional break. ' +
+                         '50MA at $' + ma50.toFixed(2) + ' is pivotal support/resistance level.';
+            }
+            
+            return insight;
+        }
+
+        function generateSentimentInsight(data) {
+            const vix = parseFloat(data.vixEod);
+            const vix10ma = parseFloat(data.vix10ma);
+            const fg = parseFloat(data.fearGreed);
+            const vixVs10d = parseFloat(data.vixVs10d);
+            
+            let insight = '';
+            
+            // Extreme Fear scenario
+            if (fg <= 25) {
+                insight = '🔴 EXTREME FEAR at ' + fg + '. ' +
+                         (vix > 25 ? 'VIX elevated at ' + vix.toFixed(1) + ' confirms panic. ' : '') +
+                         'Historically, extreme fear levels mark near-term bottoms. ' +
+                         (vixVs10d > 10 ? 'Volatility spiking - may signal capitulation.' : 'Consider accumulation opportunities.');
+            }
+            // Fear scenario
+            else if (fg <= 45) {
+                insight = '😨 Fear dominates at ' + fg + '. VIX at ' + vix.toFixed(1) + ' shows ' +
+                         (vix < 20 ? 'controlled anxiety' : 'heightened concern') + '. ' +
+                         'Sentiment overly negative - contrarian opportunity if technical support holds.';
+            }
+            // Neutral scenario
+            else if (fg <= 55) {
+                insight = '😐 Neutral sentiment (' + fg + '). Market in balance with VIX at ' + vix.toFixed(1) + '. ' +
+                         'Neither fear nor greed dominating. Look to technical levels and trend for directional cues.';
+            }
+            // Greed scenario  
+            else if (fg <= 75) {
+                insight = '😊 Greed emerging at ' + fg + '. ' +
+                         (vix < 15 ? 'Low VIX (' + vix.toFixed(1) + ') suggests complacency. ' : '') +
+                         'Optimism building but not yet excessive. Monitor for overheated conditions.';
+            }
+            // Extreme Greed scenario
+            else {
+                insight = '🟢 EXTREME GREED at ' + fg + '. VIX compressed at ' + vix.toFixed(1) + ' shows complacency. ' +
+                         'Warning: Historically precedes pullbacks. Consider taking profits or tightening stops.';
+            }
+            
+            return insight;
+        }
+
         async function loadHistoricalData() {
             if (!HISTORICAL_CSV_URL) {
                 console.log('⚠️ No historical CSV URL configured, using mock data');
@@ -1500,6 +1586,22 @@
                 const crossInsightContent = crossInsightBox.querySelector('.ai-insight-content');
                 if (crossInsightContent) {
                     crossInsightContent.textContent = generateCrossInsight(d);
+                }
+            }
+            
+            const maInsightBox = document.getElementById('maAIInsight');
+            if (maInsightBox) {
+                const maInsightContent = maInsightBox.querySelector('.ai-insight-content');
+                if (maInsightContent) {
+                    maInsightContent.textContent = generateMAInsight(d);
+                }
+            }
+            
+            const sentimentInsightBox = document.getElementById('sentimentAIInsight');
+            if (sentimentInsightBox) {
+                const sentimentInsightContent = sentimentInsightBox.querySelector('.ai-insight-content');
+                if (sentimentInsightContent) {
+                    sentimentInsightContent.textContent = generateSentimentInsight(d);
                 }
             }
             
