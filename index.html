@@ -84,7 +84,36 @@
             color: #ffa502;
             font-weight: 600;
         }
-        .last-updated { color: #888; font-size: 0.9em; }
+        
+        /* Navigation */
+        .navigation {
+            margin-top: 25px;
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #aaa;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .nav-link.active {
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .last-updated { color: #888; font-size: 0.9em; margin-top: 15px; }
         .loading { text-align: center; padding: 40px; font-size: 1.2em; color: #00d4ff; }
         .error {
             background: rgba(255, 71, 87, 0.2);
@@ -632,13 +661,17 @@
                 <strong>Focus:</strong> Growth Tech Stocks (QQQ/Nasdaq-100) | 
                 <strong>Purpose:</strong> Risk monitoring and technical analysis for informational purposes only. Not financial advice.
             </div>
+            <nav class="navigation">
+                <a href="#/" class="nav-link">Dashboard</a>
+                <a href="#/glossary" class="nav-link">Glossary</a>
+            </nav>
             <div class="last-updated" id="lastUpdated">Loading...</div>
         </div>
 
         <div id="loading" class="loading">Loading market data...</div>
         <div id="error" class="error" style="display: none;"></div>
         
-        <div id="dashboard" style="display: none;">
+        <div id="page-dashboard">
             <!-- Executive Summary -->
             <div class="exec-summary">
                 <div class="exec-summary-header">
@@ -796,7 +829,9 @@
                 </div>
                 <div id="detailedAnalysis">Analyzing market conditions...</div>
             </div>
-            
+        </div>
+
+        <div id="page-glossary" style="display: none;">
             <!-- Glossary & Methodology Section -->
             <div class="glossary-section">
                 <div class="glossary-header">
@@ -1195,17 +1230,42 @@
 
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=2141065289&single=true&output=csv';
-        
-        // TODO: Add your Historical_Data sheet CSV URL here
-        // Leave empty to use mock data
-        // ============================================
-        // TODO: PASTE YOUR HISTORICAL DATA CSV URL BELOW
-        // Get it from: File > Share > Publish to web > Historical_Data sheet > CSV format
-        // Example: https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?gid=XXXXX&single=true&output=csv
-        // ============================================
-
         const HISTORICAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9zKKjsxivMTlhDdAnsf3py3xCQZfZbcZtdV20FFKGwEpJXzIofIk-qYWDCCw1eP5QMOjNfQpB5wLH/pub?gid=192889417&single=true&output=csv';
         
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboardPage = document.getElementById('page-dashboard');
+            const glossaryPage = document.getElementById('page-glossary');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            function handleRouteChange() {
+                const hash = window.location.hash || '#/';
+                
+                if (hash === '#/glossary') {
+                    dashboardPage.style.display = 'none';
+                    glossaryPage.style.display = 'block';
+                    document.querySelector('.nav-link[href="#/"]').classList.remove('active');
+                    document.querySelector('.nav-link[href="#/glossary"]').classList.add('active');
+                } else {
+                    dashboardPage.style.display = 'block';
+                    glossaryPage.style.display = 'none';
+                    document.querySelector('.nav-link[href="#/"]').classList.add('active');
+                    document.querySelector('.nav-link[href="#/glossary"]').classList.remove('active');
+                }
+            }
+
+            window.addEventListener('hashchange', handleRouteChange);
+            
+            // Initial route handling
+            handleRouteChange();
+
+            // Only load data if on the dashboard page initially
+            if (!window.location.hash || window.location.hash === '#/') {
+                loadData();
+                setInterval(loadData, 3600000); // Refresh every hour
+            }
+        });
+
+
         // Historical data storage
         let historicalData = {
             vix: [],
@@ -1835,11 +1895,8 @@
             set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
             
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('page-dashboard').style.display = 'block';
         }
-
-        loadData();
-        setInterval(loadData, 3600000); // Refresh every hour
     </script>
 </body>
 </html>
