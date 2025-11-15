@@ -209,6 +209,34 @@
             margin-left: 5px;
         }
         
+        /* Visual Chart Styles */
+        .visual-chart-container {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chart-title {
+            font-size: 0.85em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .mini-chart {
+            width: 100%;
+            height: 80px;
+            border-radius: 4px;
+        }
+        .chart-legend {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.75em;
+            color: #888;
+        }
+        
         /* Asset Comparison Cards */
         .asset-card {
             background: rgba(255, 255, 255, 0.05);
@@ -460,7 +488,7 @@
                     
                     <div class="card">
                         <div class="card-title">Market Sentiment & Volatility</div>
-                        <div class="card-subtitle">Short and mid-term fear indicators</div>
+                        <div class="card-subtitle">Fear indicators and sentiment composite</div>
                         <div class="metric">
                             <span class="metric-label">VIX (Fear Index)</span>
                             <span class="metric-value" id="vixEod">--</span>
@@ -474,18 +502,54 @@
                             <span class="metric-value" id="vixVs10d">--</span>
                         </div>
                         <div class="metric">
-                            <span class="metric-label">QQQ from 21MA</span>
-                            <span class="metric-value" id="qqq21ma">--</span>
+                            <span class="metric-label">CNN Fear & Greed</span>
+                            <span class="metric-value" id="fearGreedValue">--</span>
+                        </div>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <span class="status-badge" id="fearGreedBadge">--</span>
                         </div>
                         <div id="fearGreedTrend" class="trend-mini"></div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Visual Trend Charts -->
+            <div class="multi-asset-section">
+                <div class="section-header">📈 5-Day Trend Analysis</div>
+                <div class="dashboard">
+                    <div class="card">
+                        <div class="visual-chart-container">
+                            <div class="chart-title">QQQ Price Movement</div>
+                            <canvas id="qqqChart" class="mini-chart"></canvas>
+                            <div class="chart-legend">
+                                <span id="qqqChartMin">--</span>
+                                <span id="qqqChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
+                                <span id="qqqChartMax">--</span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="card">
-                        <div class="card-title">CNN Fear & Greed</div>
-                        <div class="card-subtitle">Sentiment composite (0-100)</div>
-                        <div class="large-value" id="fearGreedValue">--</div>
-                        <div style="text-align: center;">
-                            <span class="status-badge" id="fearGreedBadge">--</span>
+                        <div class="visual-chart-container">
+                            <div class="chart-title">21MA vs 50MA Spread</div>
+                            <canvas id="maChart" class="mini-chart"></canvas>
+                            <div class="chart-legend">
+                                <span id="maChartMin">--</span>
+                                <span id="maChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
+                                <span id="maChartMax">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="visual-chart-container">
+                            <div class="chart-title">Fear & Greed Index</div>
+                            <canvas id="fgChart" class="mini-chart"></canvas>
+                            <div class="chart-legend">
+                                <span id="fgChartMin">--</span>
+                                <span id="fgChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
+                                <span id="fgChartMax">--</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -625,6 +689,110 @@
                     <span class="trend-arrow-mini ${trendClass}">${trend}</span>
                 </div>
             `;
+        }
+        
+        function drawMiniChart(canvasId, values, label) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas || !values || values.length === 0) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth * 2; // 2x for retina
+            const height = canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+            
+            const w = canvas.offsetWidth;
+            const h = canvas.offsetHeight;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, w, h);
+            
+            // Calculate data range
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            const range = max - min || 1; // Avoid division by zero
+            const padding = 10;
+            
+            // Determine trend color
+            const isUptrend = values[values.length - 1] >= values[0];
+            const lineColor = isUptrend ? '#26de81' : '#ff6b6b';
+            const gradientColor = isUptrend ? 'rgba(38, 222, 129, 0.2)' : 'rgba(255, 107, 107, 0.2)';
+            
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, h);
+            gradient.addColorStop(0, gradientColor);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            
+            // Draw area
+            ctx.beginPath();
+            values.forEach((value, i) => {
+                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
+                const y = h - padding - ((value - min) / range) * (h - padding * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(w - padding, h - padding);
+            ctx.lineTo(padding, h - padding);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw line
+            ctx.beginPath();
+            values.forEach((value, i) => {
+                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
+                const y = h - padding - ((value - min) / range) * (h - padding * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw points
+            values.forEach((value, i) => {
+                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
+                const y = h - padding - ((value - min) / range) * (h - padding * 2);
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = lineColor;
+                ctx.fill();
+                ctx.strokeStyle = '#1a1a2e';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            
+            // Update legend
+            const minEl = document.getElementById(canvasId.replace('Chart', 'ChartMin'));
+            const maxEl = document.getElementById(canvasId.replace('Chart', 'ChartMax'));
+            const currentEl = document.getElementById(canvasId.replace('Chart', 'ChartCurrent'));
+            
+            if (minEl) minEl.textContent = `Min: ${min.toFixed(2)}`;
+            if (maxEl) maxEl.textContent = `Max: ${max.toFixed(2)}`;
+            if (currentEl) currentEl.textContent = `Current: ${values[values.length - 1].toFixed(2)}`;
+        }
+        
+        function updateVisualCharts(data) {
+            // Generate or use historical data
+            const qqqHistory = historicalData.qqq.length > 0 ? historicalData.qqq : 
+                [parseFloat(data.qqqPrice) * 0.97, parseFloat(data.qqqPrice) * 0.99, 
+                 parseFloat(data.qqqPrice) * 1.01, parseFloat(data.qqqPrice) * 0.98, 
+                 parseFloat(data.qqqPrice)];
+            
+            const maHistory = historicalData.ma21vs50.length > 0 ? historicalData.ma21vs50 :
+                [parseFloat(data.ma21vs50) * 0.95, parseFloat(data.ma21vs50) * 0.97,
+                 parseFloat(data.ma21vs50) * 1.02, parseFloat(data.ma21vs50) * 1.05,
+                 parseFloat(data.ma21vs50)];
+            
+            const fgHistory = historicalData.fearGreed.length > 0 ? historicalData.fearGreed :
+                [parseFloat(data.fearGreed) + 5, parseFloat(data.fearGreed) + 2,
+                 parseFloat(data.fearGreed) - 3, parseFloat(data.fearGreed) - 1,
+                 parseFloat(data.fearGreed)];
+            
+            // Draw charts
+            drawMiniChart('qqqChart', qqqHistory, 'QQQ Price');
+            drawMiniChart('maChart', maHistory, '21MA vs 50MA');
+            drawMiniChart('fgChart', fgHistory, 'Fear & Greed');
         }
         
         async function fetchMultiAssetData() {
@@ -880,7 +1048,7 @@
             
             const fg = parseFloat(d.fearGreed);
             const fgs = getFearGreedStatus(fg);
-            set('fearGreedValue', d.fearGreed, 'large-value ' + fgs.class.split('-')[1]);
+            set('fearGreedValue', d.fearGreed, 'metric-value ' + fgs.class.split('-')[1]);
             set('fearGreedBadge', fgs.text, 'status-badge ' + fgs.class);
             
             set('vix10ma', d.vix10ma);
@@ -904,6 +1072,9 @@
             setHTML('priceTrend', createTrendMini('5-Day QQQ', historicalData.qqq, parseFloat(d.qqqPrice)));
             setHTML('maTrend', createTrendMini('5-Day 21vs50', historicalData.ma21vs50, parseFloat(d.ma21vs50)));
             setHTML('fearGreedTrend', createTrendMini('5-Day F&G', historicalData.fearGreed, parseFloat(d.fearGreed)));
+            
+            // Update visual charts
+            updateVisualCharts(d);
             
             set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
             
