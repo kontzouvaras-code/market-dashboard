@@ -1105,10 +1105,11 @@
         }
         
         async function fetchMultiAssetData() {
+            // Updated to show VXX (Volatility) and IWM (Small Caps) - more relevant for tech risk monitoring
             return {
                 SPY: { price: 580.45, change: 0.45, change_pct: 0.08, ma21: 575.20, ma50: 568.30 },
-                TLT: { price: 92.15, change: -0.32, change_pct: -0.35, ma21: 92.80, ma50: 93.50 },
-                GLD: { price: 245.67, change: 1.23, change_pct: 0.50, ma21: 244.10, ma50: 242.80 }
+                VXX: { price: 52.30, change: 1.25, change_pct: 2.45, ma21: 50.80, ma50: 49.20 },
+                IWM: { price: 218.45, change: -0.85, change_pct: -0.39, ma21: 220.10, ma50: 215.80 }
             };
         }
         
@@ -1144,8 +1145,8 @@
                 const arrow = data.change >= 0 ? '▲' : '▼';
                 let description = '';
                 if (symbol === 'SPY') description = 'S&P 500 ETF';
-                else if (symbol === 'TLT') description = '20+ Year Treasury';
-                else if (symbol === 'GLD') description = 'Gold ETF';
+                else if (symbol === 'VXX') description = 'Volatility ETF';
+                else if (symbol === 'IWM') description = 'Russell 2000 ETF';
                 
                 return `
                     <div class="asset-card">
