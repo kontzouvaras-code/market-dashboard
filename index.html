@@ -33,6 +33,39 @@
             text-align: center;
             color: #ff4757;
         }
+        .exec-summary {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 153, 255, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+        }
+        .exec-summary-header {
+            color: #00d4ff;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .exec-summary-content {
+            font-size: 1.1em;
+            line-height: 1.9;
+            color: #fff;
+            font-weight: 500;
+        }
+        .tldr-badge {
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.6em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
         .summary-box {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -41,6 +74,15 @@
             padding: 25px;
             margin-bottom: 30px;
             line-height: 1.8;
+        }
+        .detailed-analysis-header {
+            color: #ffa502;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 15px;
+            border-bottom: 2px solid rgba(255, 165, 2, 0.3);
         }
         .summary-header {
             color: #ffa502;
@@ -187,14 +229,19 @@
         <div id="error" class="error" style="display: none;"></div>
         
         <div id="dashboard" style="display: none;">
-            <div class="summary-box">
-                <div class="summary-header">
-                    Market Analysis
-                    <span class="ai-badge">CLAUDE AI</span>
+            <!-- Executive Summary at the top -->
+            <div class="exec-summary">
+                <div class="exec-summary-header">
+                    <span>📋</span>
+                    Executive Summary
+                    <span class="tldr-badge">TL;DR</span>
                 </div>
-                <div id="summaryText">Analyzing market conditions...</div>
+                <div class="exec-summary-content" id="execSummary">
+                    Analyzing market conditions...
+                </div>
             </div>
             
+            <!-- Dashboard cards in the middle -->
             <div class="dashboard">
                 <div class="card">
                     <div class="card-title">Advanced Risk Assessment</div>
@@ -293,6 +340,15 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Detailed Analysis at the bottom -->
+            <div class="summary-box">
+                <div class="detailed-analysis-header">
+                    📊 Detailed Market Analysis
+                    <span class="ai-badge" style="margin-left: 10px;">CLAUDE AI</span>
+                </div>
+                <div id="detailedAnalysis">Analyzing market conditions...</div>
+            </div>
         </div>
     </div>
 
@@ -317,69 +373,93 @@
         }
 
         function formatAIAnalysis(rawAnalysis) {
-            // This function will structure the AI response with proper HTML formatting
-            const sections = [];
+            // Split analysis into executive summary and detailed sections
+            let execSummary = '';
+            let detailedAnalysis = '';
             
-            // Try to identify sections in the raw text
-            const patterns = {
-                positioning: /(?:market positioning|current market conditions)[:\s]*(.*?)(?=(?:risk indicator|strategic opportunities|positioning recommendations|$))/is,
-                risk: /(?:risk indicator assessment|risk assessment)[:\s]*(.*?)(?=(?:strategic opportunities|positioning recommendations|market positioning|$))/is,
-                opportunities: /(?:strategic opportunities)[:\s]*(.*?)(?=(?:positioning recommendations|risk indicator|market positioning|$))/is,
-                recommendations: /(?:positioning recommendations|recommendations)[:\s]*(.*?)(?=(?:strategic opportunities|risk indicator|market positioning|$))/is
-            };
-
-            let formattedHTML = '<div class="analysis-section">';
-            
-            // Check if the analysis already has clear structure
-            if (rawAnalysis.includes('**') || rawAnalysis.includes('Market Positioning') || rawAnalysis.includes('Risk Indicator')) {
-                // Parse structured response
-                const lines = rawAnalysis.split('\n');
-                let currentSection = null;
+            // Check if analysis has a clear structure
+            if (rawAnalysis.includes('**MARKET POSITIONING**') || rawAnalysis.includes('MARKET POSITIONING:')) {
+                // Extract the title/first line for exec summary
+                const lines = rawAnalysis.split('\n').filter(line => line.trim());
+                const firstLine = lines[0] || '';
                 
-                lines.forEach(line => {
-                    line = line.trim();
-                    if (!line) return;
-                    
-                    // Check for section headers
-                    if (line.includes('Market Positioning') || line.includes('MARKET POSITIONING')) {
-                        if (currentSection) formattedHTML += '</div>';
-                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">📊</span>Market Positioning</div><div class="section-content">';
-                        currentSection = 'positioning';
-                    } else if (line.includes('Risk Indicator') || line.includes('Risk Assessment')) {
-                        if (currentSection) formattedHTML += '</div>';
-                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">⚠️</span>Risk Assessment</div><div class="section-content">';
-                        currentSection = 'risk';
-                    } else if (line.includes('Strategic Opportunities') || line.includes('Opportunities')) {
-                        if (currentSection) formattedHTML += '</div>';
-                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">💡</span>Strategic Opportunities</div><div class="section-content">';
-                        currentSection = 'opportunities';
-                    } else if (line.includes('Positioning Recommendations') || line.includes('Recommendations')) {
-                        if (currentSection) formattedHTML += '</div>';
-                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">🎯</span>Action Items</div><div class="section-content">';
-                        currentSection = 'recommendations';
-                    } else if (currentSection && line.length > 0) {
-                        // Clean up markdown-style formatting
-                        let cleanLine = line
-                            .replace(/\*\*/g, '')
-                            .replace(/^\-\s+/, '• ')
-                            .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>');
-                        
-                        // Highlight percentages
-                        cleanLine = cleanLine.replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>');
-                        
-                        formattedHTML += cleanLine + '<br>';
+                // Get the title line (MARKET POSITIONING: ...)
+                const titleMatch = firstLine.match(/\*\*MARKET POSITIONING:\s*(.+?)\*\*/i) || 
+                                   firstLine.match(/MARKET POSITIONING:\s*(.+)/i);
+                
+                if (titleMatch) {
+                    execSummary = titleMatch[1].trim();
+                }
+                
+                // If we still don't have a summary, try to extract key points from Current Market Conditions
+                if (!execSummary || execSummary.includes('**')) {
+                    const conditionsMatch = rawAnalysis.match(/\*\*Current Market Conditions\*\*\s*\n(.+?)(?=\n\*\*|$)/is);
+                    if (conditionsMatch) {
+                        execSummary = conditionsMatch[1].trim().split('\n')[0].replace(/\*\*/g, '').substring(0, 200) + '...';
                     }
-                });
+                }
                 
-                formattedHTML += '</div></div>';
+                // Format detailed analysis with structure
+                detailedAnalysis = formatDetailedSections(rawAnalysis);
             } else {
-                // If unstructured, just display with basic formatting
-                formattedHTML = '<div class="section-content">' + 
+                // If unstructured, use first sentence for exec summary
+                const sentences = rawAnalysis.split(/[.!?]+/);
+                execSummary = sentences[0] + '.';
+                detailedAnalysis = '<div class="section-content">' + 
                     rawAnalysis
                         .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>')
                         .replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>') +
                     '</div>';
             }
+            
+            return { execSummary, detailedAnalysis };
+        }
+        
+        function formatDetailedSections(rawAnalysis) {
+            let formattedHTML = '';
+            const lines = rawAnalysis.split('\n');
+            let currentSection = null;
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                
+                // Check for section headers
+                if (line.includes('MARKET POSITIONING') || line.includes('Market Positioning')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">📊</span>Market Positioning</div><div class="section-content">';
+                    currentSection = 'positioning';
+                } else if (line.includes('Current Market Conditions')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">📈</span>Current Market Conditions</div><div class="section-content">';
+                    currentSection = 'conditions';
+                } else if (line.includes('Risk Indicator') || line.includes('Risk Assessment')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">⚠️</span>Risk Assessment</div><div class="section-content">';
+                    currentSection = 'risk';
+                } else if (line.includes('Strategic Opportunities') || line.includes('Opportunities')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">💡</span>Strategic Opportunities</div><div class="section-content">';
+                    currentSection = 'opportunities';
+                } else if (line.includes('Positioning Recommendations') || line.includes('Recommendations')) {
+                    if (currentSection) formattedHTML += '</div></div>';
+                    formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">🎯</span>Action Items</div><div class="section-content">';
+                    currentSection = 'recommendations';
+                } else if (currentSection && line.length > 0 && !line.startsWith('**MARKET')) {
+                    // Clean up markdown-style formatting
+                    let cleanLine = line
+                        .replace(/\*\*/g, '')
+                        .replace(/^\-\s+/, '• ')
+                        .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>');
+                    
+                    // Highlight percentages
+                    cleanLine = cleanLine.replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>');
+                    
+                    formattedHTML += cleanLine + '<br>';
+                }
+            });
+            
+            if (currentSection) formattedHTML += '</div></div>';
             
             return formattedHTML;
         }
@@ -436,8 +516,10 @@
                 
                 // Get AI analysis after updating the dashboard
                 const analysis = await getAIAnalysis(data);
-                const formattedAnalysis = formatAIAnalysis(analysis);
-                document.getElementById('summaryText').innerHTML = formattedAnalysis;
+                const { execSummary, detailedAnalysis } = formatAIAnalysis(analysis);
+                
+                document.getElementById('execSummary').innerHTML = execSummary;
+                document.getElementById('detailedAnalysis').innerHTML = detailedAnalysis;
                 
             } catch (e) {
                 document.getElementById('error').textContent = 'Error: ' + e.message;
@@ -493,6 +575,8 @@
             set('qqq50maMain', d.qqq50ma + getTrendArrow(q50), 'metric-value ' + getColorClass(q50, 'p'));
             
             set('summaryText', 'Getting AI analysis...');
+            set('execSummary', 'Getting AI analysis...');
+            set('detailedAnalysis', 'Getting AI analysis...');
             set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
             
             document.getElementById('loading').style.display = 'none';
