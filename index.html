@@ -34,11 +34,65 @@
             color: #ff4757;
         }
         .summary-box {
-            background: rgba(255, 165, 2, 0.1);
-            border-radius: 8px;
-            border-left: 4px solid #ffa502;
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 165, 2, 0.3);
+            padding: 25px;
             margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        .summary-header {
+            color: #ffa502;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ai-badge {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.65em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .analysis-section {
+            margin-bottom: 20px;
+        }
+        .analysis-section:last-child {
+            margin-bottom: 0;
+        }
+        .section-title {
+            color: #00d4ff;
+            font-weight: 600;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-icon {
+            font-size: 1.2em;
+        }
+        .section-content {
+            color: #e0e0e0;
+            font-size: 0.95em;
+            line-height: 1.7;
+            padding-left: 28px;
+        }
+        .highlight {
+            color: #ffa502;
+            font-weight: 600;
+        }
+        .key-level {
+            background: rgba(255, 165, 2, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
         }
         .dashboard {
             display: grid;
@@ -134,8 +188,11 @@
         
         <div id="dashboard" style="display: none;">
             <div class="summary-box">
-                <strong style="color: #ffa502;">Market Analysis</strong> <span style="color: #666; font-size: 0.9em;">(powered by Claude AI)</span><br>
-                <span id="summaryText">Analyzing market conditions...</span>
+                <div class="summary-header">
+                    Market Analysis
+                    <span class="ai-badge">CLAUDE AI</span>
+                </div>
+                <div id="summaryText">Analyzing market conditions...</div>
             </div>
             
             <div class="dashboard">
@@ -259,6 +316,74 @@
             return { text: 'EXTREME GREED', class: 'badge-greed' };
         }
 
+        function formatAIAnalysis(rawAnalysis) {
+            // This function will structure the AI response with proper HTML formatting
+            const sections = [];
+            
+            // Try to identify sections in the raw text
+            const patterns = {
+                positioning: /(?:market positioning|current market conditions)[:\s]*(.*?)(?=(?:risk indicator|strategic opportunities|positioning recommendations|$))/is,
+                risk: /(?:risk indicator assessment|risk assessment)[:\s]*(.*?)(?=(?:strategic opportunities|positioning recommendations|market positioning|$))/is,
+                opportunities: /(?:strategic opportunities)[:\s]*(.*?)(?=(?:positioning recommendations|risk indicator|market positioning|$))/is,
+                recommendations: /(?:positioning recommendations|recommendations)[:\s]*(.*?)(?=(?:strategic opportunities|risk indicator|market positioning|$))/is
+            };
+
+            let formattedHTML = '<div class="analysis-section">';
+            
+            // Check if the analysis already has clear structure
+            if (rawAnalysis.includes('**') || rawAnalysis.includes('Market Positioning') || rawAnalysis.includes('Risk Indicator')) {
+                // Parse structured response
+                const lines = rawAnalysis.split('\n');
+                let currentSection = null;
+                
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (!line) return;
+                    
+                    // Check for section headers
+                    if (line.includes('Market Positioning') || line.includes('MARKET POSITIONING')) {
+                        if (currentSection) formattedHTML += '</div>';
+                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">📊</span>Market Positioning</div><div class="section-content">';
+                        currentSection = 'positioning';
+                    } else if (line.includes('Risk Indicator') || line.includes('Risk Assessment')) {
+                        if (currentSection) formattedHTML += '</div>';
+                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">⚠️</span>Risk Assessment</div><div class="section-content">';
+                        currentSection = 'risk';
+                    } else if (line.includes('Strategic Opportunities') || line.includes('Opportunities')) {
+                        if (currentSection) formattedHTML += '</div>';
+                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">💡</span>Strategic Opportunities</div><div class="section-content">';
+                        currentSection = 'opportunities';
+                    } else if (line.includes('Positioning Recommendations') || line.includes('Recommendations')) {
+                        if (currentSection) formattedHTML += '</div>';
+                        formattedHTML += '<div class="analysis-section"><div class="section-title"><span class="section-icon">🎯</span>Action Items</div><div class="section-content">';
+                        currentSection = 'recommendations';
+                    } else if (currentSection && line.length > 0) {
+                        // Clean up markdown-style formatting
+                        let cleanLine = line
+                            .replace(/\*\*/g, '')
+                            .replace(/^\-\s+/, '• ')
+                            .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>');
+                        
+                        // Highlight percentages
+                        cleanLine = cleanLine.replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>');
+                        
+                        formattedHTML += cleanLine + '<br>';
+                    }
+                });
+                
+                formattedHTML += '</div></div>';
+            } else {
+                // If unstructured, just display with basic formatting
+                formattedHTML = '<div class="section-content">' + 
+                    rawAnalysis
+                        .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>')
+                        .replace(/([\+\-]\d+\.?\d*%)/g, '<span class="highlight">$1</span>') +
+                    '</div>';
+            }
+            
+            return formattedHTML;
+        }
+
         async function getAIAnalysis(data) {
             try {
                 const response = await fetch('/.netlify/functions/analyze', {
@@ -311,7 +436,8 @@
                 
                 // Get AI analysis after updating the dashboard
                 const analysis = await getAIAnalysis(data);
-                document.getElementById('summaryText').textContent = analysis;
+                const formattedAnalysis = formatAIAnalysis(analysis);
+                document.getElementById('summaryText').innerHTML = formattedAnalysis;
                 
             } catch (e) {
                 document.getElementById('error').textContent = 'Error: ' + e.message;
