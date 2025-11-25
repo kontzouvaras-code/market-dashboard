@@ -190,10 +190,6 @@
         .risk-factor-label { color: #ccc; }
         .risk-factor-value { font-weight: 600; }
         
-        /* Multi-Asset Dashboard */
-        .multi-asset-section {
-            margin-bottom: 30px;
-        }
         .section-header {
             font-size: 1.3em;
             font-weight: 600;
@@ -271,62 +267,6 @@
         .trend-arrow-mini {
             font-size: 1.2em;
             margin-left: 5px;
-        }
-        
-        /* Visual Chart Styles */
-        .visual-chart-container {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .chart-title {
-            font-size: 0.85em;
-            color: #00d4ff;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-align: center;
-        }
-        .mini-chart {
-            width: 100%;
-            height: 80px;
-            border-radius: 4px;
-        }
-        .chart-legend {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.75em;
-            color: #888;
-        }
-        
-        /* Asset Comparison Cards */
-        .asset-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .asset-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .asset-name {
-            font-size: 1.2em;
-            font-weight: 600;
-        }
-        .asset-price {
-            font-size: 1.4em;
-            font-weight: 700;
-        }
-        .asset-change {
-            font-size: 1.1em;
-            font-weight: 600;
-            margin-bottom: 10px;
         }
         
         /* Colors */
@@ -477,175 +417,10 @@
         .large-value { font-size: 3em; font-weight: 700; text-align: center; margin: 20px 0; }
         .trend-arrow { font-size: 1.2em; margin-left: 5px; }
         
-        /* Glossary Section */
-        .glossary-section {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 15px;
-            padding: 40px;
-            margin-top: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .glossary-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
-        }
-        .glossary-icon {
-            font-size: 2em;
-        }
-        .glossary-header h2 {
-            font-size: 2em;
-            font-weight: 700;
-            background: linear-gradient(45deg, #00d4ff, #0099ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
-        .glossary-intro {
-            font-size: 1.1em;
-            line-height: 1.8;
-            color: #ccc;
-            margin-bottom: 40px;
-            padding: 20px;
-            background: rgba(0, 212, 255, 0.05);
-            border-left: 4px solid #00d4ff;
-            border-radius: 8px;
-        }
-        .glossary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        .glossary-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .glossary-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
-            border-color: rgba(0, 212, 255, 0.3);
-        }
-        .glossary-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-        .glossary-emoji {
-            font-size: 1.8em;
-        }
-        .glossary-card-header h3 {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #00d4ff;
-            margin: 0;
-        }
-        .glossary-content {
-            color: #e0e0e0;
-            line-height: 1.7;
-        }
-        .glossary-content p {
-            margin-bottom: 15px;
-        }
-        .glossary-content strong {
-            color: #fff;
-            font-weight: 600;
-        }
-        .glossary-content ul {
-            margin: 10px 0 15px 20px;
-            padding: 0;
-        }
-        .glossary-content li {
-            margin-bottom: 8px;
-            line-height: 1.6;
-        }
-        .glossary-content ul ul {
-            margin-top: 8px;
-            margin-left: 20px;
-        }
-        .risk-label {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-        .risk-label.low {
-            background: rgba(38, 222, 129, 0.2);
-            color: #26de81;
-            border: 1px solid #26de81;
-        }
-        .risk-label.moderate {
-            background: rgba(255, 165, 2, 0.2);
-            color: #ffa502;
-            border: 1px solid #ffa502;
-        }
-        .risk-label.high {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-            border: 1px solid #ff6b6b;
-        }
-        .risk-label.critical {
-            background: rgba(139, 0, 0, 0.2);
-            color: #ff4757;
-            border: 1px solid #ff4757;
-        }
-        .vix-level, .fg-level {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 5px;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-        .vix-level.low, .fg-level.greed, .fg-level.extreme-greed {
-            background: rgba(38, 222, 129, 0.2);
-            color: #26de81;
-        }
-        .vix-level.normal, .fg-level.neutral {
-            background: rgba(255, 165, 2, 0.2);
-            color: #ffa502;
-        }
-        .vix-level.elevated, .fg-level.fear {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-        }
-        .vix-level.high, .vix-level.extreme, .fg-level.extreme-fear {
-            background: rgba(255, 71, 87, 0.2);
-            color: #ff4757;
-        }
-        .glossary-footer {
-            margin-top: 40px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 165, 2, 0.2);
-        }
-        .glossary-footer p {
-            margin-bottom: 15px;
-            line-height: 1.7;
-            color: #aaa;
-            font-size: 0.9em;
-        }
-        .glossary-footer p:last-child {
-            margin-bottom: 0;
-        }
-        
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .glossary-grid {
+            .dashboard {
                 grid-template-columns: 1fr;
-            }
-            .glossary-section {
-                padding: 25px 20px;
             }
         }
     </style>
@@ -693,12 +468,6 @@
                     <div class="risk-meter-label" id="riskMeterLabel">Calculating...</div>
                 </div>
                 <div class="risk-breakdown" id="riskBreakdown"></div>
-            </div>
-            
-            <!-- Multi-Asset Dashboard -->
-            <div class="multi-asset-section">
-                <div class="section-header">🌐 Multi-Asset Overview</div>
-                <div class="dashboard" id="multiAssetGrid"></div>
             </div>
             
             <!-- QQQ Primary Dashboard -->
@@ -804,48 +573,6 @@
                                 <span>Quick Insight</span>
                             </div>
                             <div class="ai-insight-content">Analyzing sentiment...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Visual Trend Charts -->
-            <div class="multi-asset-section">
-                <div class="section-header">📈 5-Day Trend Analysis</div>
-                <div class="dashboard">
-                    <div class="card">
-                        <div class="visual-chart-container">
-                            <div class="chart-title">QQQ Price Movement</div>
-                            <canvas id="qqqChart" class="mini-chart"></canvas>
-                            <div class="chart-legend">
-                                <span id="qqqChartMin">--</span>
-                                <span id="qqqChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
-                                <span id="qqqChartMax">--</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="visual-chart-container">
-                            <div class="chart-title">21MA vs 50MA Spread</div>
-                            <canvas id="maChart" class="mini-chart"></canvas>
-                            <div class="chart-legend">
-                                <span id="maChartMin">--</span>
-                                <span id="maChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
-                                <span id="maChartMax">--</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="visual-chart-container">
-                            <div class="chart-title">Fear & Greed Index</div>
-                            <canvas id="fgChart" class="mini-chart"></canvas>
-                            <div class="chart-legend">
-                                <span id="fgChartMin">--</span>
-                                <span id="fgChartCurrent" style="color: #00d4ff; font-weight: 600;">Current: --</span>
-                                <span id="fgChartMax">--</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -996,181 +723,6 @@
                     <span class="trend-arrow-mini ${trendClass}">${trend}</span>
                 </div>
             `;
-        }
-        
-        function drawMiniChart(canvasId, values, label) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas || !values || values.length === 0) return;
-            
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width = canvas.offsetWidth * 2; // 2x for retina
-            const height = canvas.height = canvas.offsetHeight * 2;
-            ctx.scale(2, 2);
-            
-            const w = canvas.offsetWidth;
-            const h = canvas.offsetHeight;
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, w, h);
-            
-            // Calculate data range
-            const min = Math.min(...values);
-            const max = Math.max(...values);
-            const range = max - min || 1; // Avoid division by zero
-            const padding = 10;
-            
-            // Determine trend color
-            const isUptrend = values[values.length - 1] >= values[0];
-            const lineColor = isUptrend ? '#26de81' : '#ff6b6b';
-            const gradientColor = isUptrend ? 'rgba(38, 222, 129, 0.2)' : 'rgba(255, 107, 107, 0.2)';
-            
-            // Create gradient
-            const gradient = ctx.createLinearGradient(0, 0, 0, h);
-            gradient.addColorStop(0, gradientColor);
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-            
-            // Draw area
-            ctx.beginPath();
-            values.forEach((value, i) => {
-                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
-                const y = h - padding - ((value - min) / range) * (h - padding * 2);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-            ctx.lineTo(w - padding, h - padding);
-            ctx.lineTo(padding, h - padding);
-            ctx.closePath();
-            ctx.fillStyle = gradient;
-            ctx.fill();
-            
-            // Draw line
-            ctx.beginPath();
-            values.forEach((value, i) => {
-                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
-                const y = h - padding - ((value - min) / range) * (h - padding * 2);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-            ctx.strokeStyle = lineColor;
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Draw points
-            values.forEach((value, i) => {
-                const x = padding + (i / (values.length - 1)) * (w - padding * 2);
-                const y = h - padding - ((value - min) / range) * (h - padding * 2);
-                
-                ctx.beginPath();
-                ctx.arc(x, y, 3, 0, Math.PI * 2);
-                ctx.fillStyle = lineColor;
-                ctx.fill();
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            });
-            
-            // Update legend
-            const minEl = document.getElementById(canvasId.replace('Chart', 'ChartMin'));
-            const maxEl = document.getElementById(canvasId.replace('Chart', 'ChartMax'));
-            const currentEl = document.getElementById(canvasId.replace('Chart', 'ChartCurrent'));
-            
-            if (minEl) minEl.textContent = `Min: ${min.toFixed(2)}`;
-            if (maxEl) maxEl.textContent = `Max: ${max.toFixed(2)}`;
-            if (currentEl) currentEl.textContent = `Current: ${values[values.length - 1].toFixed(2)}`;
-        }
-        
-        function updateVisualCharts(data) {
-            console.log('🎨 Updating visual charts...');
-            
-            // Generate or use historical data
-            const qqqHistory = historicalData.qqq.length > 0 ? historicalData.qqq : 
-                [parseFloat(data.qqqPrice) * 0.97, parseFloat(data.qqqPrice) * 0.99, 
-                 parseFloat(data.qqqPrice) * 1.01, parseFloat(data.qqqPrice) * 0.98, 
-                 parseFloat(data.qqqPrice)];
-            
-            const maHistory = historicalData.ma21vs50.length > 0 ? historicalData.ma21vs50 :
-                [parseFloat(data.ma21vs50) * 0.95, parseFloat(data.ma21vs50) * 0.97,
-                 parseFloat(data.ma21vs50) * 1.02, parseFloat(data.ma21vs50) * 1.05,
-                 parseFloat(data.ma21vs50)];
-            
-            const fgHistory = historicalData.fearGreed.length > 0 ? historicalData.fearGreed :
-                [parseFloat(data.fearGreed) + 5, parseFloat(data.fearGreed) + 2,
-                 parseFloat(data.fearGreed) - 3, parseFloat(data.fearGreed) - 1,
-                 parseFloat(data.fearGreed)];
-            
-            // Draw charts
-            drawMiniChart('qqqChart', qqqHistory, 'QQQ Price');
-            drawMiniChart('maChart', maHistory, '21MA vs 50MA');
-            drawMiniChart('fgChart', fgHistory, 'Fear & Greed');
-        }
-        
-        async function fetchMultiAssetData() {
-            // Updated asset selection: BTC for crypto exposure, IWM for risk appetite
-            return {
-                SPY: { price: 580.45, change: 0.45, change_pct: 0.08, ma21: 575.20, ma50: 568.30 },
-                BTC: { price: 91250.00, change: 1850.00, change_pct: 2.07, ma21: 89800.00, ma50: 87500.00 },
-                IWM: { price: 218.45, change: -0.85, change_pct: -0.39, ma21: 220.10, ma50: 215.80 }
-            };
-        }
-        
-        function renderMultiAssetGrid(assets, qqqData) {
-            const grid = document.getElementById('multiAssetGrid');
-            
-            // Add QQQ first
-            const qqqChange = parseFloat(qqqData.qqq21ma);
-            const qqqHtml = `
-                <div class="asset-card">
-                    <div class="asset-header">
-                        <div>
-                            <div class="asset-name">QQQ</div>
-                            <div style="font-size: 0.85em; color: #888;">Nasdaq 100 ETF</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div class="asset-price">$${qqqData.qqqPrice}</div>
-                        </div>
-                    </div>
-                    <div class="asset-change ${qqqChange >= 0 ? 'bullish' : 'bearish'}">
-                        ${qqqChange >= 0 ? '▲' : '▼'} ${Math.abs(qqqChange).toFixed(2)}%
-                    </div>
-                    <div style="font-size: 0.85em; color: #888; margin-top: 10px;">
-                        <div>21MA: $${qqqData.qqq21}</div>
-                        <div>50MA: $${qqqData.qqq50}</div>
-                    </div>
-                </div>
-            `;
-            
-            // Add other assets
-            const assetsHtml = Object.entries(assets).map(([symbol, data]) => {
-                const changeClass = data.change >= 0 ? 'bullish' : 'bearish';
-                const arrow = data.change >= 0 ? '▲' : '▼';
-                let description = '';
-                if (symbol === 'SPY') description = 'S&P 500 ETF';
-                else if (symbol === 'BTC') description = 'Bitcoin';
-                else if (symbol === 'IWM') description = 'Russell 2000 ETF';
-                
-                return `
-                    <div class="asset-card">
-                        <div class="asset-header">
-                            <div>
-                                <div class="asset-name">${symbol}</div>
-                                <div style="font-size: 0.85em; color: #888;">${description}</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div class="asset-price">$${data.price.toFixed(2)}</div>
-                            </div>
-                        </div>
-                        <div class="asset-change ${changeClass}">
-                            ${arrow} ${Math.abs(data.change_pct).toFixed(2)}% ($${Math.abs(data.change).toFixed(2)})
-                        </div>
-                        <div style="font-size: 0.85em; color: #888; margin-top: 10px;">
-                            <div>21MA: $${data.ma21.toFixed(2)}</div>
-                            <div>50MA: $${data.ma50.toFixed(2)}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            grid.innerHTML = qqqHtml + assetsHtml;
         }
 
         function formatAIAnalysis(rawAnalysis) {
@@ -1478,9 +1030,6 @@
                 updateDashboard(data);
                 updateRiskMeter(data);
                 
-                const multiAssetData = await fetchMultiAssetData();
-                renderMultiAssetGrid(multiAssetData, data);
-                
                 const analysis = await getAIAnalysis(data);
                 const { execSummary, detailedAnalysis } = formatAIAnalysis(analysis);
                 
@@ -1609,8 +1158,6 @@
                 }
             }
             
-            updateVisualCharts(d);
-            
             set('lastUpdated', 'Last Updated: ' + new Date().toLocaleString());
             
             document.getElementById('loading').style.display = 'none';
@@ -1620,15 +1167,12 @@
         loadData();
         
         // Market hours optimization - only update during trading hours
-        // Saves ~80% on Claude API costs (~$2/month vs ~$10/month)
         function isMarketHours() {
             const now = new Date();
             const day = now.getUTCDay(); // 0=Sunday, 6=Saturday
             const hour = now.getUTCHours();
             
             // Convert to ET (UTC-5 or UTC-4 during DST)
-            // Simplified: Assume standard time (UTC-5)
-            // Market hours: 9:30 AM - 4:00 PM ET = 14:30 - 21:00 UTC
             const etHour = (hour - 5 + 24) % 24;
             
             // Monday-Friday (1-5), 9 AM - 5 PM ET
@@ -1646,7 +1190,7 @@
             } else {
                 console.log('💤 Outside market hours - skipping update');
             }
-        }, 3600000); // Still check every hour, but only load during market hours
+        }, 3600000);
     </script>
 </body>
 </html>
