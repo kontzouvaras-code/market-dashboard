@@ -733,24 +733,65 @@
                 const lines = rawAnalysis.split('\n').filter(line => line.trim());
                 const firstLine = lines[0] || '';
                 
+                // Extract the title/headline
                 const titleMatch = firstLine.match(/\*\*MARKET POSITIONING:\s*(.+?)\*\*/i) || 
                                    firstLine.match(/MARKET POSITIONING:\s*(.+)/i);
                 
+                let headline = '';
                 if (titleMatch) {
-                    execSummary = titleMatch[1].trim();
+                    headline = titleMatch[1].trim();
                 }
                 
-                if (!execSummary || execSummary.includes('**')) {
-                    const conditionsMatch = rawAnalysis.match(/\*\*Current Market Conditions\*\*\s*\n(.+?)(?=\n\*\*|$)/is);
-                    if (conditionsMatch) {
-                        execSummary = conditionsMatch[1].trim().split('\n')[0].replace(/\*\*/g, '').substring(0, 200) + '...';
+                // Extract additional context from Current Market Conditions section
+                let additionalContext = '';
+                const conditionsMatch = rawAnalysis.match(/\*\*Current Market Conditions\*\*\s*\n([\s\S]+?)(?=\n\*\*|$)/i);
+                if (conditionsMatch) {
+                    // Get the first 2-3 meaningful lines from conditions
+                    const conditionLines = conditionsMatch[1]
+                        .split('\n')
+                        .map(l => l.trim().replace(/\*\*/g, '').replace(/^[\-•]\s*/, ''))
+                        .filter(l => l.length > 20);
+                    
+                    if (conditionLines.length > 0) {
+                        additionalContext = conditionLines.slice(0, 2).join(' ');
                     }
+                }
+                
+                // Also try to get a key insight from Risk or Opportunities section
+                let keyInsight = '';
+                const opportunitiesMatch = rawAnalysis.match(/\*\*(Strategic Opportunities|Opportunities)\*\*\s*\n([\s\S]+?)(?=\n\*\*|$)/i);
+                if (opportunitiesMatch) {
+                    const oppLines = opportunitiesMatch[2]
+                        .split('\n')
+                        .map(l => l.trim().replace(/\*\*/g, '').replace(/^[\-•]\s*/, ''))
+                        .filter(l => l.length > 15);
+                    if (oppLines.length > 0) {
+                        keyInsight = oppLines[0];
+                    }
+                }
+                
+                // Build comprehensive exec summary
+                if (headline) {
+                    execSummary = '<strong>' + headline + '</strong>';
+                    if (additionalContext) {
+                        execSummary += '<br><br>' + additionalContext;
+                    }
+                    if (keyInsight && keyInsight !== additionalContext) {
+                        execSummary += ' <span style="color: #ffa502;">' + keyInsight + '</span>';
+                    }
+                } else if (additionalContext) {
+                    execSummary = additionalContext;
+                } else {
+                    execSummary = 'Analyzing current market conditions...';
                 }
                 
                 detailedAnalysis = formatDetailedSections(rawAnalysis);
             } else {
-                const sentences = rawAnalysis.split(/[.!?]+/);
-                execSummary = sentences[0] + '.';
+                // Fallback: extract first 3 sentences for exec summary
+                const sentences = rawAnalysis.split(/(?<=[.!?])\s+/);
+                const summarysentences = sentences.slice(0, 3).join(' ');
+                execSummary = summarysentences;
+                
                 detailedAnalysis = '<div class="section-content">' + 
                     rawAnalysis
                         .replace(/\$(\d+)/g, '<span class="key-level">$$$1</span>')
